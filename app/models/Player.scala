@@ -27,3 +27,4 @@ class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0)
     Nil
     //stub
   }
+}
