@@ -2,7 +2,7 @@
 
   @main("Widgets") {
 
-    <h1>Widgets</h1>
+    <h1>RISK</h1>
 
     @* Flash shows updates to a page *@
     @request.flash.data.map{ case (name, value) =>
@@ -11,11 +11,11 @@
 
     <table>
       <thead>
-        <tr><th>Name</th><th>Price</th>
+        <tr><th>Player Name</th>
       </thead>
       <tbody>
       @for(w <- widgets) {
-        <tr><td>@w.name</td><td>@w.price</td></tr>
+        <tr><td>@w.name</td></tr>
       }
       </tbody>
     </table>
@@ -36,8 +36,6 @@
 
       @helper.inputText(form("name"))
 
-      @helper.inputText(form("price"))
-
-      <button>Create widget</button>
+      <button>Add Player</button>
     }
   }
