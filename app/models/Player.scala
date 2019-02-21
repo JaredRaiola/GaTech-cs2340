@@ -15,7 +15,7 @@ class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0)
 
   def selectEnemyTerritory(terr: Territory): Boolean = {
     !terr.ownerName.equals(this.name)
-
+  }
 
   def attack(myTerr: Territory, otherTerr: Territory): List[Int] = {
     if (!turnMode.equals(2)) return Nil
