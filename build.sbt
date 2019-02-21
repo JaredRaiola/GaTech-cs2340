@@ -1,17 +1,18 @@
-name := """RiskTest"""
-organization := "com.team17.cs2340.gatech"
+name := """play-scala-forms-example"""
 
-version := "1.0-SNAPSHOT"
-
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+version := "2.7.x"
 
 scalaVersion := "2.12.8"
+
+crossScalaVersions := Seq("2.11.12", "2.12.7")
+
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.1" % Test
 
-// Adds additional packages into Twirl
-//TwirlKeys.templateImports += "com.team17.cs2340.gatech.controllers._"
-
-// Adds additional packages into conf/routes
-// play.sbt.routes.RoutesKeys.routesImport += "com.team17.cs2340.gatech.binders._"
+scalacOptions ++= Seq(
+    "-feature",
+    "-deprecation",
+    "-Xfatal-warnings"
+)
