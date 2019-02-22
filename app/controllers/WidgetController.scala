@@ -20,16 +20,13 @@ import play.api.mvc._
 class WidgetController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
   import WidgetForm._
 
-  private var widgets = scala.collection.mutable.ArrayBuffer(
-    Widget("Ada Limon"),
-    Widget("Anne Carson"),
-    Widget("Danez Smith")
-  )
+  private var widgets = scala.collection.mutable.ArrayBuffer(Widget(""))
 
   // The URL to the widget.  You can call this directly from the template, but it
   // can be more convenient to leave the template completely stateless i.e. all
   // of the "WidgetController" references are inside the .scala file.
   private val postUrl = routes.WidgetController.createWidget()
+  widgets.remove(0)
 
   def index = Action {
     Ok(views.html.index())
@@ -52,12 +49,29 @@ class WidgetController @Inject()(cc: MessagesControllerComponents) extends Messa
     val successFunction = { data: Data =>
       // This is the good case, where the form was successfully parsed as a Data object.
       val widget = Widget(name = data.name)
-      if (widgets.contains(widget)) {
-        Redirect(routes.WidgetController.listWidgets()).flashing("info" -> "Please enter a unique name!")
+      if (!widgets.isEmpty){
+        if (widgets.contains(widget)) {
+          Redirect(routes.WidgetController.listWidgets()).flashing("info" -> "Please enter a unique name!")
+        } else if (widgets.length < 6) {
+          widgets.append(widget)
+          widgets = scala.util.Random.shuffle(widgets)
+          if (widgets.length < 3) {
+            val numplayR = 3 - widgets.length
+            val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
+            Redirect(routes.WidgetController.listWidgets()).flashing("info" -> playremain)
+          } else {
+            val numplay = widgets.length
+            val playremain = "You have " + numplay.toString + " player slots filled"
+            Redirect(routes.WidgetController.listWidgets()).flashing("info" -> playremain)
+          }
+        } else {
+          Redirect(routes.WidgetController.listWidgets()).flashing("info" -> "You have entered 6 players already!")
+        }
       } else {
         widgets.append(widget)
-        widgets = scala.util.Random.shuffle(widgets)
-        Redirect(routes.WidgetController.listWidgets()).flashing("info" -> "Player added!")
+        val numplayR = 3 - widgets.length
+        val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
+        Redirect(routes.WidgetController.listWidgets()).flashing("info" -> playremain)
       }
     }
 

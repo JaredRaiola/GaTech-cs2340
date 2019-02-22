@@ -1,3 +1,5 @@
+package models
+
 class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0) {
   //turn mode 0 is not their turn, 1 is place armies, 2 is attack, 3 is move, then 0
   //  def updateBinCount   depending on how many territories they own
