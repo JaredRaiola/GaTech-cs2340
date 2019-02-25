@@ -1,6 +1,6 @@
-@(widgets: Seq[Widget], form: Form[WidgetForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
+@(players: Seq[Player], form: Form[PlayerForm.Data], postUrl: Call)(implicit request: MessagesRequestHeader)
 
-  @main("Widgets") {
+  @main("Players") {
 
     <h1>RISK</h1>
 
@@ -14,7 +14,7 @@
         <tr><th>Player Name</th>
       </thead>
       <tbody>
-      @for(w <- widgets) {
+      @for(w <- players) {
         <tr><td>@w.name</td></tr>
       }
       </tbody>
