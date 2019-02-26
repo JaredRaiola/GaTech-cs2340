@@ -1,3 +1,5 @@
+package models
+
 class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0) {
   //turn mode 0 is not their turn, 1 is place armies, 2 is attack, 3 is move, then 0
   //  def updateBinCount   depending on how many territories they own
@@ -15,7 +17,7 @@ class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0)
 
   def selectEnemyTerritory(terr: Territory): Boolean = {
     !terr.ownerName.equals(this.name)
-
+  }
 
   def attack(myTerr: Territory, otherTerr: Territory): List[Int] = {
     if (!turnMode.equals(2)) return Nil
@@ -27,3 +29,4 @@ class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0)
     Nil
     //stub
   }
+}

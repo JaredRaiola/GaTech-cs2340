@@ -1,6 +1,6 @@
 package controllers
 
-object WidgetForm {
+object PlayerForm {
   import play.api.data.Forms._
   import play.api.data.Form
 
