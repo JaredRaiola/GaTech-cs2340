@@ -32,6 +32,7 @@
         }
     }
 
+
     @helper.form(postUrl) {
       @helper.CSRF.formField
 
@@ -40,7 +41,11 @@
       <button>Add Player</button>
 
     }
-    <form action="@routes.PlayerController.armyview()">
-        <input type="submit" value="Play Game" />
-    </form>
-  }
+    @if(players.length >= 3) {
+        <form id="playGame" action="@routes.PlayerController.armyview()">
+            <input type="submit" value="Play Game" />
+        </form>
+    }
+
+
+}
