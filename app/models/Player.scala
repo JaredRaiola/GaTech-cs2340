@@ -15,6 +15,10 @@ class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0)
     terr.ownerName.equals(this.name)
   }
 
+  def setArmyCount(count : Int) = {
+    armyBinCount = count;
+  }
+
   def selectEnemyTerritory(terr: Territory): Boolean = {
     !terr.ownerName.equals(this.name)
   }

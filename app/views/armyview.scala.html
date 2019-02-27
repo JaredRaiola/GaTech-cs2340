@@ -9,11 +9,11 @@
             <body>
                 <table>
                     <thead>
-                        <tr><th>Player Name</th>
+                        <tr><th>Player Name</th> <th>Army Count </th>
                     </thead>
                     <tbody>
                     @for(w <- players) {
-                        <tr><td>@w.name</td></tr>
+                        <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
                     }
                     </tbody>
                 </table>
