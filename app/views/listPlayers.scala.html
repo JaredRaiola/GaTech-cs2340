@@ -24,11 +24,11 @@
 
     @* Global errors are not tied to any particular form field *@
     @if(form.hasGlobalErrors) {
-      @form.globalErrors.map { error: FormError =>
-        <div>
-          @error.key: @error.message
-        </div>
-      }
+        @form.globalErrors.map { error: FormError =>
+            <div>
+                @error.key: @error.message
+            </div>
+        }
     }
 
     @helper.form(postUrl) {
@@ -37,7 +37,9 @@
       @helper.inputText(form("name"))
 
       <button>Add Player</button>
-      <button>Play Game</button>
 
     }
+    <form action="@routes.PlayerController.armyview()">
+        <input type="submit" value="Play Game" />
+    </form>
   }

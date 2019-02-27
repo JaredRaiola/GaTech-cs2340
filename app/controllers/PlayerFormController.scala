@@ -33,6 +33,10 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
     Ok(views.html.index())
   }
 
+  def armyview = Action {
+    Ok(views.html.armyview(players))
+  }
+
   def listPlayers = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
     Ok(views.html.listPlayers(players, form, postUrl))
