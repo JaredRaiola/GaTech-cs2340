@@ -1,0 +1,23 @@
+@(players: Seq[Player])
+    @main("armyview") {
+
+        <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>Review Your Armies</title>
+            </head>
+            <body>
+                <table>
+                    <thead>
+                        <tr><th>Player Name</th> <th>Army Count </th>
+                    </thead>
+                    <tbody>
+                    @for(w <- players) {
+                        <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                    }
+                    </tbody>
+                </table>
+            </body>
+        </html>
+
+}

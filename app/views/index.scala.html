@@ -1,9 +1,12 @@
 @()
 
   @main("Welcome to Play") {
+  <header>
+    <h1>Risk</h1>
+  </header>
     <div>
-      <ul>
-        <li>Please go to <a href="@routes.PlayerController.listPlayers">@routes.PlayerController.listPlayers</a></li>
-      </ul>
+      <form action="@routes.PlayerController.listPlayers">
+        <input type="submit" value="Play Game" />
+      </form>
     </div>
   }

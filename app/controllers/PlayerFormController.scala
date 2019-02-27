@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
-//import models.Widget
+
 import models.Player
 import play.api.data._
 import play.api.i18n._
@@ -33,6 +33,11 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
     Ok(views.html.index())
   }
 
+  def armyview = Action {
+    Ok(views.html.armyview(players))
+
+  }
+
   def listPlayers = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
     Ok(views.html.listPlayers(players, form, postUrl))
@@ -56,6 +61,9 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
         } else if (players.length < 6) {
           players.append(player)
           players = scala.util.Random.shuffle(players)
+          for(w <- players) {
+            w.setArmyCount(35 - (5* (players.length-3)))
+          }
           if (players.length < 3) {
             val numplayR = 3 - players.length
             val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
@@ -72,6 +80,9 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
         players.append(player)
         val numplayR = 3 - players.length
         val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
+        for(w <- players) {
+          w.setArmyCount(35 - (5* (players.length-3)))
+        }
         Redirect(routes.PlayerController.listPlayers()).flashing("info" -> playremain)
       }
     }
