@@ -8,6 +8,7 @@ GET     /                           controllers.PlayerController.index
 # Players
 GET     /players                    controllers.PlayerController.listPlayers
 POST    /players                    controllers.PlayerController.createPlayer
+PUT    /players                    controllers.PlayerController.shuffle
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
