@@ -1,4 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|EB+Garamond');
+
+body {
+    font-family: 'EB Garamond', serif;
+    width: 100%;
+    background-color: #eaeaea;
+}
+
 h1 {
+    font-family: 'Alfa Slab One', cursive;
     text-align: center;
 }
 
@@ -28,10 +37,115 @@ h3 {
     border-radius: 5px;
 }
 
+.name-input input[type=text] {
+    padding: 12px 20px;
+    width: 200px;
+    margin: 0 auto;
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.1);
+
+    transition: all .25s;
+    -webkit-transition: all .25s;
+    -o-transition: all .25s;
+    -moz-transition: all .25s;
+}
+
+.name-input input[type=text]:focus {
+    width: 250px;
+    box-shadow: 0 8px 16px rgba(0,0,0,.4);
+}
+
+.name-input dd {
+    margin: 0;
+}
+
+.name-input dd.info {
+    display: none;
+}
+
+.name-input {
+    width: 400px;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+
+
+.name-input label{display: none;}
+
 .pressButton {
     padding: 10px;
-    margin: 10px;
-    background-color: darkseagreen;
+    margin: 20px auto;
+    width: 200px;
+    display: block;
     border-radius: 10px;
-    border: none;
+    border: 4px solid darkgreen;
+    font-family: 'EB Garamond', serif;
+    font-weight: bold;
+
+    transition: all .25s;
+    -webkit-transition: all .25s;
+    -o-transition: all .25s;
+    -moz-transition: all .25s;
+}
+
+.pressButton:hover {
+    background-color: darkgreen;
+    color: white;
+    cursor: pointer;
+}
+
+.army-list {
+    text-align: center;
+    margin: 0 auto;
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.1);
+}
+
+.army-list tr {
+    margin: 10px;
+}
+
+.map-table {
+    margin: 0 auto;
+}
+
+.map-unit {
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.1);
+    margin: 8px 5px 2px;
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+
+    background-color: white;
+    color: gray;
+
+    transition: all .35s;
+    -webkit-transition: all .35s;
+    -o-transition: all .35s;
+    -moz-transition: all .35s;
+}
+
+.map-unit:hover {
+    background-color: darkgreen;
+    box-shadow: 0 8px 17px rgba(0,0,0,.4);
+    color: white;
+    cursor: pointer;
+
+    margin: 2px 5px 8px;
+}
+
+.map-unit h3 {
+    font-weight: bold;
+    margin: 0;
+}
+
+.map-unit p {
+    line-height: 10px;
 }

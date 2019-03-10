@@ -7,7 +7,8 @@
                 <title>Review Your Armies</title>
             </head>
             <body>
-                <table>
+                <h3>Players</h3>
+                <table class="army-list">
                     <thead>
                         <tr><th>Player Name</th> <th>Army Count </th>
                     </thead>
@@ -17,10 +18,32 @@
                     }
                     </tbody>
                 </table>
-                <div class="terrList">
-                @for(i <- 0 until terrCont.terrArray.length) {
-                    <p>Territory @i: @terrCont.terrArray(i).name, owned by @terrCont.terrArray(i).getOwner with @terrCont.terrArray(i).armyCount armies.</p>
-                }</div>
+                <br>
+                <h3>Map</h3>
+                <table class="map-table">
+                    <tbody>
+                            @for(i <- 0 until 6) {
+                                <tr class="map-row">
+                                    @for(j <- 0 until 8) {
+                                        @{
+                                            var num = i * 8 + j
+                                            <td class="map-unit">
+                                            <h3>Territory</h3>
+                                            <h3>{num}</h3>
+                                            <p>Owner: {terrCont.terrArray(num).getOwner}</p>
+                                            <p>Armies: {terrCont.terrArray(num).armyCount}</p>
+
+
+
+                                            </td>
+                                        }
+                                    }
+
+                                </tr>
+                            }
+
+                    </tbody>
+                </table>
             </body>
         </html>
 
