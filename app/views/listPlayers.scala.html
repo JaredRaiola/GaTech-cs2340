@@ -2,7 +2,7 @@
 
   @main("Players") {
 
-    <h1>RISK</h1>
+    <h1>RYSK</h1>
     <h3>Enter 3 to 6 Unique Player Names</h3>
 
     @* Flash shows updates to a page *@
@@ -33,7 +33,7 @@
         }
     }
 
-
+    <div class="name-input">
     @helper.form(postUrl) {
       @helper.CSRF.formField
 
@@ -41,7 +41,7 @@
 
       <button class="pressButton">Add Player</button>
 
-    }
+    }</div>
     @if(players.length >= 3) {
         <form id="playGame" action="@routes.PlayerController.armyview()">
             <input class="pressButton" type="submit" value="Play Game" />
