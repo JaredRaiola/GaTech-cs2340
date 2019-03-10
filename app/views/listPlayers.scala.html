@@ -2,21 +2,22 @@
 
   @main("Players") {
 
-    <h1>RISK</h1>
+    <h1>RYSK</h1>
     <h3>Enter 3 to 6 Unique Player Names</h3>
 
     @* Flash shows updates to a page *@
     @request.flash.data.map{ case (name, value) =>
-      <div>@name: @value</div>
+      <div class="message">@name: @value</div>
     }
 
-    <table>
+    <table class="playerList">
       <thead>
-        <tr><th>Player Name</th>
+          <tr><th>Players</th></tr>
       </thead>
       <tbody>
-      @for(w <- players) {
-        <tr><td>@w.name</td></tr>
+      @for(i <- players.indices) {
+        <tr><td>Player @(i + 1)</td>
+            <td>@players(i).name</td></tr>
       }
       </tbody>
     </table>
@@ -32,18 +33,18 @@
         }
     }
 
-
+    <div class="name-input">
     @helper.form(postUrl) {
       @helper.CSRF.formField
 
       @helper.inputText(form("name"))
 
-      <button>Add Player</button>
+      <button class="pressButton">Add Player</button>
 
-    }
+    }</div>
     @if(players.length >= 3) {
         <form id="playGame" action="@routes.PlayerController.armyview()">
-            <input type="submit" value="Play Game" />
+            <input class="pressButton" type="submit" value="Play Game" />
         </form>
     }
 
