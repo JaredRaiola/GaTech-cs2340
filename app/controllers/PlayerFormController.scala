@@ -37,7 +37,7 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
   def armyview = Action {
     val terrArray = new Array[Territory](48)
     for (i <- terrArray.indices) {
-      terrArray(i) = new Territory(i, "TerritoryName" + i, "", 0)
+      terrArray(i) = new Territory("TerritoryName" + i, "", 0)
     }
     val terrCont = new TerritoryController(terrArray)
     Ok(views.html.armyview(players, terrCont))
