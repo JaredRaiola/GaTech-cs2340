@@ -8,4 +8,8 @@ class Territory(val name: String, var ownerName: String = "", var armyCount: Int
   }
 
   final override def hashCode = (name).##
+
+  def getOwner = {
+    if (ownerName.equals("")) "no one" else ownerName
+  }
 }

@@ -1,0 +1,37 @@
+h1 {
+    text-align: center;
+}
+
+h3 {
+    text-align: center;
+}
+
+.playerList {
+    display: block;
+    padding: 15px;
+}
+
+.playerList tr {
+    display: block;
+    padding: 5px;
+}
+
+.playerList td {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+
+.message {
+    padding: 10px;
+    background-color: pink;
+    border-radius: 5px;
+}
+
+.pressButton {
+    padding: 10px;
+    margin: 10px;
+    background-color: darkseagreen;
+    border-radius: 10px;
+    border: none;
+}

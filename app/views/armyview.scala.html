@@ -1,4 +1,4 @@
-@(players: Seq[Player])
+@(players: Seq[Player], terrCont: TerritoryController)
     @main("armyview") {
 
         <html lang="en">
@@ -17,6 +17,10 @@
                     }
                     </tbody>
                 </table>
+                <div class="terrList">
+                @for(i <- 0 until terrCont.terrArray.length) {
+                    <p>Territory @i: @terrCont.terrArray(i).name, owned by @terrCont.terrArray(i).getOwner with @terrCont.terrArray(i).armyCount armies.</p>
+                }</div>
             </body>
         </html>
 
