@@ -2,22 +2,23 @@ package controllers
 
 import javax.inject.Inject
 
-//import models.Widget
+
 import models.Player
+import models.Territory
 import play.api.data._
 import play.api.i18n._
 import play.api.mvc._
 
 /**
- * The classic WidgetController using MessagesAbstractController.
- *
- * Instead of MessagesAbstractController, you can use the I18nSupport trait,
- * which provides implicits that create a Messages instance from a request
- * using implicit conversion.
- *
- * See https://www.playframework.com/documentation/2.6.x/ScalaForms#passing-messagesprovider-to-form-helpers
- * for details.
- */
+  * The classic WidgetController using MessagesAbstractController.
+  *
+  * Instead of MessagesAbstractController, you can use the I18nSupport trait,
+  * which provides implicits that create a Messages instance from a request
+  * using implicit conversion.
+  *
+  * See https://www.playframework.com/documentation/2.6.x/ScalaForms#passing-messagesprovider-to-form-helpers
+  * for details.
+  */
 class PlayerController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
   import PlayerForm._
 
@@ -31,6 +32,15 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
 
   def index = Action {
     Ok(views.html.index())
+  }
+
+  def armyview = Action {
+    val terrArray = new Array[Territory](48)
+    for (i <- terrArray.indices) {
+      terrArray(i) = new Territory(i, "TerritoryName" + i, "", 0)
+    }
+    val terrCont = new TerritoryController(terrArray)
+    Ok(views.html.armyview(players, terrCont))
   }
 
   def listPlayers = Action { implicit request: MessagesRequest[AnyContent] =>
@@ -52,27 +62,33 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
       val player = new Player(data.name, 0, 0)
       if (!players.isEmpty){
         if (players.contains(player)) {
-          Redirect(routes.PlayerController.listPlayers()).flashing("info" -> "Please enter a unique name!")
+          Redirect(routes.PlayerController.listPlayers()).flashing("Warning" -> "Please enter a unique name!")
         } else if (players.length < 6) {
           players.append(player)
           players = scala.util.Random.shuffle(players)
+          for(w <- players) {
+            w.setArmyCount(35 - (5* (players.length-3)))
+          }
           if (players.length < 3) {
             val numplayR = 3 - players.length
             val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
-            Redirect(routes.PlayerController.listPlayers()).flashing("info" -> playremain)
+            Redirect(routes.PlayerController.listPlayers()).flashing("Note" -> playremain)
           } else {
             val numplay = players.length
             val playremain = "You have " + numplay.toString + " player slots filled"
-            Redirect(routes.PlayerController.listPlayers()).flashing("info" -> playremain)
+            Redirect(routes.PlayerController.listPlayers()).flashing("Note" -> playremain)
           }
         } else {
-          Redirect(routes.PlayerController.listPlayers()).flashing("info" -> "You have entered 6 players already!")
+          Redirect(routes.PlayerController.listPlayers()).flashing("Warning" -> "You have entered 6 players already!")
         }
       } else {
         players.append(player)
         val numplayR = 3 - players.length
         val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
-        Redirect(routes.PlayerController.listPlayers()).flashing("info" -> playremain)
+        for(w <- players) {
+          w.setArmyCount(35 - (5* (players.length-3)))
+        }
+        Redirect(routes.PlayerController.listPlayers()).flashing("Note" -> playremain)
       }
     }
 
