@@ -19,7 +19,7 @@ import play.api.mvc._
   * See https://www.playframework.com/documentation/2.6.x/ScalaForms#passing-messagesprovider-to-form-helpers
   * for details.
   */
-class PlayerController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
+class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
   import PlayerForm._
 
   private var players = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
@@ -27,7 +27,7 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
   // The URL to the widget.  You can call this directly from the template, but it
   // can be more convenient to leave the template completely stateless i.e. all
   // of the "WidgetController" references are inside the .scala file.
-  private val postUrl = routes.PlayerController.createPlayer()
+  private val postUrl = routes.PlayerFormController.createPlayer()
   players.remove(0)
 
   def index = Action {
@@ -62,7 +62,7 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
       val player = new Player(data.name, 0, 0)
       if (!players.isEmpty){
         if (players.contains(player)) {
-          Redirect(routes.PlayerController.listPlayers()).flashing("Warning" -> "Please enter a unique name!")
+          Redirect(routes.PlayerFormController.listPlayers()).flashing("Warning" -> "Please enter a unique name!")
         } else if (players.length < 6) {
           players.append(player)
           players = scala.util.Random.shuffle(players)
@@ -72,14 +72,14 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
           if (players.length < 3) {
             val numplayR = 3 - players.length
             val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
-            Redirect(routes.PlayerController.listPlayers()).flashing("Note" -> playremain)
+            Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
           } else {
             val numplay = players.length
             val playremain = "You have " + numplay.toString + " player slots filled"
-            Redirect(routes.PlayerController.listPlayers()).flashing("Note" -> playremain)
+            Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
           }
         } else {
-          Redirect(routes.PlayerController.listPlayers()).flashing("Warning" -> "You have entered 6 players already!")
+          Redirect(routes.PlayerFormController.listPlayers()).flashing("Warning" -> "You have entered 6 players already!")
         }
       } else {
         players.append(player)
@@ -88,7 +88,7 @@ class PlayerController @Inject()(cc: MessagesControllerComponents) extends Messa
         for(w <- players) {
           w.setArmyCount(35 - (5* (players.length-3)))
         }
-        Redirect(routes.PlayerController.listPlayers()).flashing("Note" -> playremain)
+        Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
       }
     }
 
