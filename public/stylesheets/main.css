@@ -2,7 +2,7 @@
 
 body {
     font-family: 'EB Garamond', serif;
-    width: 99%;
+    width: 100%;
     background-color: #eaeaea;
 }
 
@@ -16,6 +16,15 @@ h3 {
 }
 h5 {
     text-align: center;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
 }
 
 .playerList {
