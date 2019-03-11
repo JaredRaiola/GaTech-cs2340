@@ -15,3 +15,6 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 # Players
 GET     /armyview                    controllers.PlayerFormController.armyview
 POST    /armyview                    controllers.PlayerFormController.armyview
+
+# initial Territory claiming and setup
+#GET     /armyview                     controllers.
