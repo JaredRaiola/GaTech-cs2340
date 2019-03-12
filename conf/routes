@@ -17,7 +17,10 @@ GET     /armyview                    controllers.PlayerFormController.armyview
 POST    /armyview                    controllers.PlayerFormController.armyview
 
 # initial Territory claiming and setup
-POST     /armyview/                    controllers.ArmySetUpController.createArmySetUpController(players: ArrayBuffer[Player], terrCont: TerritoryController)
+#fix later
+#POST     /armyview/                    controllers.ArmySetUpController.createArmySetUpController(players: ArrayBuffer[Player], terrCont: TerritoryController)
 
+
+#GET     /armyview                     controllers.ArmySetUpController.claimTerritory(terr: Int)
 
 GET     /armyview                     controllers.ArmySetUpController.claimTerritory(terr: Int)
