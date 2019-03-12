@@ -38,15 +38,15 @@
       @helper.CSRF.formField
 
       @helper.inputText(form("name"))
-
       <button class="pressButton">Add Player</button>
 
     }</div>
     @if(players.length >= 3) {
-        <form id="playGame" action="@routes.PlayerController.armyview()">
+        <form id="playGame" action="@routes.PlayerFormController.armyview()">
             <input class="pressButton" type="submit" value="Play Game" />
         </form>
     }
+    <footer>Made by CS2340 Team 17</footer>
 
 
 }

@@ -3,15 +3,18 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.PlayerController.index
+GET     /                           controllers.PlayerFormController.index
 
 # Players
-GET     /players                    controllers.PlayerController.listPlayers
-POST    /players                    controllers.PlayerController.createPlayer
+GET     /players                    controllers.PlayerFormController.listPlayers
+POST    /players                    controllers.PlayerFormController.createPlayer
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 # Players
-GET     /armyview                    controllers.PlayerController.armyview
-POST    /armyview                    controllers.PlayerController.armyview
+GET     /armyview                    controllers.PlayerFormController.armyview
+POST    /armyview                    controllers.PlayerFormController.armyview
+
+# initial Territory claiming and setup
+GET     /armyview                     controllers.ArmySetUpController.claimTerritory(terr: Int)
