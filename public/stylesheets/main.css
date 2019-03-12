@@ -14,6 +14,18 @@ h1 {
 h3 {
     text-align: center;
 }
+h5 {
+    text-align: center;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+}
 
 .playerList {
     display: block;
@@ -54,7 +66,7 @@ h3 {
 
 .name-input input[type=text]:focus {
     width: 250px;
-    box-shadow: 0 8px 16px rgba(0,0,0,.4);
+    box-shadow: 0 8px 16px rgba(0,0,0,.5);
 }
 
 .name-input dd {
