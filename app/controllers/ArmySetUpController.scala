@@ -20,13 +20,15 @@ class ArmySetUpController @Inject()(cc: MessagesControllerComponents) extends Me
 
 //(var players: ArrayBuffer[Player], val terrCont: TerritoryController)
 
+  var players: ArrayBuffer[Player] = null
+  var terrCont: TerritoryController = null
 
-
-  def createArmySetUpController(players: ArrayBuffer[Player], terrCont: TerritoryController) = {
+  def createArmySetUpController(playersInput: ArrayBuffer[Player], terrContInput: TerritoryController) = {
+    players = playersInput
+    terrCont = terrContInput
   }
 
-  val players: ArrayBuffer[Player] = null
-  val terrCont: TerritoryController = null
+
 
 
 
@@ -47,10 +49,11 @@ class ArmySetUpController @Inject()(cc: MessagesControllerComponents) extends Me
 
   def claimTerritory(terrIndex: Int) = Action { //implicit request: MessagesRequest[AnyContent] =>
 
-    if (checkTerritory(terrIndex)) {
+    if (checkTerritory(terrIndex) && players(currPlayerIndex).armyBinCount != 0) {
       terrCont.terrArray(terrIndex).incrementArmy(1)
       terrCont.terrArray(terrIndex).setOwner(players(currPlayerIndex).name)
       players(currPlayerIndex).decrementArmyCount(1)
+      newTurn
       //Ok(views.html.armyview(players, terrCont))
     //} else {
       //throw exception like this
