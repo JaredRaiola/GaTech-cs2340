@@ -1,4 +1,4 @@
-@(players: Seq[Player], terrCont: TerritoryController)
+@(players: Seq[Player], terrCont: TerritoryController, form: Form[TerriForm.TerritoryData])(implicit request: MessagesRequestHeader)
     @main("armyview") {
 
         <html lang="en">
@@ -19,7 +19,20 @@
                     </tbody>
                 </table>
                 <br>
+                @* Flash shows updates to a page *@
+                @request.flash.data.map{ case (name, value) =>
+                <div class="message">@name @value</div>
+                }
+
                 <h3>Map</h3>
+                <div class="name-input">
+                @helper.form(controllers.routes.PlayerFormController.claimTerritories) {
+                    @helper.CSRF.formField
+
+                    @helper.inputText(form("terr"))
+                    <button class="pressButton">CLAIM</button>
+
+                }</div>
                 <table class="map-table">
                     <tbody>
                             @for(i <- 0 until 6) {
