@@ -88,7 +88,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
         for(w <- players) {
           w.setArmyCount(35 - (5* (players.length-3)))
         }
-        Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
+        Redirect(routes.PlayerFormController.listPlayers()).flashing("Note"  -> playremain)
       }
     }
 

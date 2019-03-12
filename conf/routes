@@ -17,4 +17,4 @@ GET     /armyview                    controllers.PlayerFormController.armyview
 POST    /armyview                    controllers.PlayerFormController.armyview
 
 # initial Territory claiming and setup
-#GET     /armyview                     controllers.
+GET     /armyview                     controllers.ArmySetUpController.claimTerritory(terr: Int)
