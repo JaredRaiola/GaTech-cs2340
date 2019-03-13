@@ -1,3 +1,4 @@
+
 @(players: Seq[Player], terrCont: TerritoryController, form: Form[TerriForm.TerritoryData])(implicit request: MessagesRequestHeader)
     @main("armyview") {
 
@@ -47,8 +48,8 @@
                                             <td class="map-unit">
                                             <h3>Territory</h3>
                                             <h3>{num}</h3>
-                                            <p>Owner: {terrCont.terrArray(num).getOwner}</p>
-                                            <p>Armies: {terrCont.terrArray(num).armyCount}</p>
+                                            <p>Owner: {terrs(num).getOwner}</p>
+                                            <p>Armies: {terrs(num).armyCount}</p>
 
 
 
