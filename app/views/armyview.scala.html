@@ -1,4 +1,5 @@
-@(players: Seq[Player], terrCont: TerritoryController)
+
+@(players: Seq[Player], terrCont: TerritoryController, form: Form[TerriForm.TerritoryData])(implicit request: MessagesRequestHeader)
     @main("armyview") {
 
         <html lang="en">
@@ -19,7 +20,24 @@
                     </tbody>
                 </table>
                 <br>
+                @* Flash shows updates to a page *@
+                @request.flash.data.map{ case (name, value) =>
+                <div class="message">@name @value</div>
+                }
+
                 <h3>Map</h3>
+                <div class="name-input">
+                @helper.form(controllers.routes.PlayerFormController.claimTerritories) {
+                    <h5> Enter the Territory You Want or type "Random" for a random territory</h5>
+                    @helper.CSRF.formField
+
+                    @helper.inputText(form("terr"))
+
+                    <button class="pressButton">CLAIM</button>
+
+
+                }</div>
+
                 <table class="map-table">
                     <tbody>
                             @for(i <- 0 until 6) {
@@ -30,8 +48,8 @@
                                             <td class="map-unit">
                                             <h3>Territory</h3>
                                             <h3>{num}</h3>
-                                            <p>Owner: {terrCont.terrArray(num).getOwner}</p>
-                                            <p>Armies: {terrCont.terrArray(num).armyCount}</p>
+                                            <p>Owner: {terrs(num).getOwner}</p>
+                                            <p>Armies: {terrs(num).armyCount}</p>
 
 
 

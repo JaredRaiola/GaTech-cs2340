@@ -20,13 +20,15 @@ class ArmySetUpController @Inject()(cc: MessagesControllerComponents) extends Me
 
 //(var players: ArrayBuffer[Player], val terrCont: TerritoryController)
 
+  var players: ArrayBuffer[Player] = null
+  var terrs: Array[Territory] = null
 
-
-  def createArmySetUpController(players: ArrayBuffer[Player], terrCont: TerritoryController) = {
+  def createArmySetUpController(playersInput: ArrayBuffer[Player], terrsInput: Array[Territory]) = {
+    players = playersInput
+    terrs = terrsInput
   }
 
-  val players: ArrayBuffer[Player] = null
-  val terrCont: TerritoryController = null
+
 
 
 
@@ -42,23 +44,25 @@ class ArmySetUpController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   def checkTerritory(terrIndex: Int): Boolean = {
-    terrCont.terrArray(terrIndex).ownerName != ""
+    terrs(terrIndex).ownerName != ""
   }
 
-  def claimTerritory(terrIndex: Int) = Action { //implicit request: MessagesRequest[AnyContent] =>
+  /*def claimTerritory(terrIndex: Int) = Action { //implicit request: MessagesRequest[AnyContent] =>
 
-    if (checkTerritory(terrIndex)) {
-      terrCont.terrArray(terrIndex).incrementArmy(1)
-      terrCont.terrArray(terrIndex).setOwner(players(currPlayerIndex).name)
+    if (checkTerritory(terrIndex) && players(currPlayerIndex).armyBinCount != 0) {
+      terrs(terrIndex).incrementArmy(1)
+      terrs(terrIndex).setOwner(players(currPlayerIndex).name)
       players(currPlayerIndex).decrementArmyCount(1)
-      //Ok(views.html.armyview(players, terrCont))
+      newTurn
+      //Ok(views.html.armyview(players, terrs))
     //} else {
       //throw exception like this
      //Redirect(routes.ArmySetUpController.claimTerritory(terrIndex)).flashing(
        //"Warning" -> "Selected Territory has already been claimed")
     }
-    Ok(views.html.armyview(players, terrCont))
+    Ok(views.html.armyview(players, terrs))
   }
+  */
 
 
 }

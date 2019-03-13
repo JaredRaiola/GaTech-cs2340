@@ -7,7 +7,7 @@
 
     @* Flash shows updates to a page *@
     @request.flash.data.map{ case (name, value) =>
-      <div class="message">@name: @value</div>
+      <div class="message">@name @value</div>
     }
 
     <table class="playerList">
@@ -42,7 +42,7 @@
 
     }</div>
     @if(players.length >= 3) {
-        <form id="playGame" action="@routes.PlayerFormController.armyview()">
+        <form id="playGame" action="@routes.PlayerFormController.listTerritories">
             <input class="pressButton" type="submit" value="Play Game" />
         </form>
     }

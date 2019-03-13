@@ -1,8 +1,7 @@
 package controllers
 
+
 import javax.inject.Inject
-
-
 import models.Player
 import models.Territory
 import play.api.data._
@@ -21,8 +20,10 @@ import play.api.mvc._
   */
 class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
   import PlayerForm._
+  import TerriForm._
 
   private var players = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
+  private var terrCont: TerritoryController = _
 
   // The URL to the widget.  You can call this directly from the template, but it
   // can be more convenient to leave the template completely stateless i.e. all
@@ -30,17 +31,77 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
   private val postUrl = routes.PlayerFormController.createPlayer()
   players.remove(0)
 
+
+  val terrArray = new Array[Territory](48)
+  for (i <- terrArray.indices) {
+    terrArray(i) = new Territory("TerritoryName" + i, "", 0)
+  }
+  terrCont = new TerritoryController(terrArray)
+  private var currPlayerIndex: Int = 0
+
+  def newTurn = {
+    if (currPlayerIndex == players.length-1) {
+      currPlayerIndex = 0
+    } else {
+      currPlayerIndex += 1
+    }
+  }
+
+  def checkTerritory(terrIndex: Int): Boolean = {
+    terrCont.terrArray(terrIndex).ownerName != ""
+  }
+
   def index = Action {
     Ok(views.html.index())
   }
 
-  def armyview = Action {
-    val terrArray = new Array[Territory](48)
-    for (i <- terrArray.indices) {
-      terrArray(i) = new Territory("TerritoryName" + i, "", 0)
+  def listTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
+    Ok(views.html.armyview(players, terrCont, terriform))
+  }
+
+  def claimTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[TerritoryData] =>
+      // This is the bad case, where the form had validation errors.
+      // Let's show the user the form again, with the errors highlighted.
+      // Note how we pass the form with errors to the template.
+      BadRequest(views.html.armyview(players, terrCont, terriform))
     }
-    val terrCont = new TerritoryController(terrArray)
-    Ok(views.html.armyview(players, terrCont))
+
+    val successFunction = { data: TerritoryData =>
+      // This is the good case, where the form was successfully parsed as a Data object.
+
+      if (terrCont.terrArray.isEmpty) {
+        Redirect(routes.PlayerFormController.listTerritories()).flashing("Huh" -> "Something went wrong.")
+      } else {
+        if (data.terr.toLowerCase() == "random"){
+          var randomter = scala.util.Random.nextInt(47)
+          while(checkTerritory(randomter)){
+            randomter = scala.util.Random.nextInt(47)
+          }
+          terrCont.terrArray(randomter).incrementArmy(1)
+          terrCont.terrArray(randomter).setOwner(players(currPlayerIndex).name)
+          players(currPlayerIndex).decrementArmyCount(1)
+          newTurn
+          Ok(views.html.armyview(players, terrCont, terriform))
+          val result = "Territory " + randomter + " now has " + terrCont.terrArray(randomter).armyCount + " armies."
+          Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result )
+
+        } else if (data.terr.toInt > 47 || data.terr.toInt < 0 || checkTerritory(data.terr.toInt)) {
+          Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there.")
+        } else {
+          terrCont.terrArray(data.terr.toInt).incrementArmy(1)
+          terrCont.terrArray(data.terr.toInt).setOwner(players(currPlayerIndex).name)
+          players(currPlayerIndex).decrementArmyCount(1)
+          newTurn
+          Ok(views.html.armyview(players, terrCont, terriform))
+          val result = "Territory " + data.terr + " now has " + terrCont.terrArray(data.terr.toInt).armyCount + " armies."
+          Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result )
+        }
+      }
+    }
+
+    val formValidationResult = terriform.bindFromRequest
+    formValidationResult.fold(errorFunction, successFunction)
   }
 
   def listPlayers = Action { implicit request: MessagesRequest[AnyContent] =>

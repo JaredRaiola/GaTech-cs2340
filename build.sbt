@@ -6,7 +6,17 @@ scalaVersion := "2.12.8"
 
 crossScalaVersions := Seq("2.11.12", "2.12.7")
 
+
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
+
+
+import PlayKeys._
+
+routesImport += "scala.collection.mutable.ArrayBuffer"
+
+routesImport += "models.Player"
+routesImport += "models.Territory"
+
 
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.1" % Test
