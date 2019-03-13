@@ -73,7 +73,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
       if (terrCont.terrArray.isEmpty) {
         Redirect(routes.PlayerFormController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else {
-        if (data.terr == "random" || data.terr == "Random"){
+        if (data.terr.toLowerCase() == "random"){
           var randomter = scala.util.Random.nextInt(47)
           while(checkTerritory(randomter)){
             randomter = scala.util.Random.nextInt(47)
