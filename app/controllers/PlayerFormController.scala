@@ -37,6 +37,19 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
     terrArray(i) = new Territory("TerritoryName" + i, "", 0)
   }
   terrCont = new TerritoryController(terrArray)
+  private var currPlayerIndex: Int = 0
+
+  def newTurn = {
+    if (currPlayerIndex == players.length-1) {
+      currPlayerIndex = 0
+    } else {
+      currPlayerIndex += 1
+    }
+  }
+
+  def checkTerritory(terrIndex: Int): Boolean = {
+    terrCont.terrArray(terrIndex).ownerName != ""
+  }
 
   def index = Action {
     Ok(views.html.index())
@@ -60,12 +73,28 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
       if (terrCont.terrArray.isEmpty) {
         Redirect(routes.PlayerFormController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else {
-        if (data.terr > 47 || data.terr < 0) {
+        if (data.terr == "random" || data.terr == "Random"){
+          var randomter = scala.util.Random.nextInt(47)
+          while(checkTerritory(randomter)){
+            randomter = scala.util.Random.nextInt(47)
+          }
+          terrCont.terrArray(randomter).incrementArmy(1)
+          terrCont.terrArray(randomter).setOwner(players(currPlayerIndex).name)
+          players(currPlayerIndex).decrementArmyCount(1)
+          newTurn
+          Ok(views.html.armyview(players, terrCont, terriform))
+          val result = "Territory " + randomter + " now has " + terrCont.terrArray(randomter).armyCount + " armies."
+          Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result )
+
+        } else if (data.terr.toInt > 47 || data.terr.toInt < 0 || checkTerritory(data.terr.toInt)) {
           Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there.")
         } else {
-          terrCont.terrArray(data.terr).incrementArmy(10)
+          terrCont.terrArray(data.terr.toInt).incrementArmy(1)
+          terrCont.terrArray(data.terr.toInt).setOwner(players(currPlayerIndex).name)
+          players(currPlayerIndex).decrementArmyCount(1)
+          newTurn
           Ok(views.html.armyview(players, terrCont, terriform))
-          val result = "Territory " + data.terr + " now has " + terrCont.terrArray(data.terr).armyCount + " armies."
+          val result = "Territory " + data.terr + " now has " + terrCont.terrArray(data.terr.toInt).armyCount + " armies."
           Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result )
         }
       }

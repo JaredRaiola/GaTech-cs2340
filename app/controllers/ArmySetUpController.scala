@@ -45,7 +45,7 @@ class ArmySetUpController @Inject()(cc: MessagesControllerComponents) extends Me
     terrCont.terrArray(terrIndex).ownerName != ""
   }
 
-  def claimTerritory(terrIndex: Int) = Action { //implicit request: MessagesRequest[AnyContent] =>
+  /*def claimTerritory(terrIndex: Int) = Action { //implicit request: MessagesRequest[AnyContent] =>
 
     if (checkTerritory(terrIndex)) {
       terrCont.terrArray(terrIndex).incrementArmy(1)
@@ -59,6 +59,7 @@ class ArmySetUpController @Inject()(cc: MessagesControllerComponents) extends Me
     }
     Ok(views.html.armyview(players, terrCont))
   }
+  */
 
 
 }

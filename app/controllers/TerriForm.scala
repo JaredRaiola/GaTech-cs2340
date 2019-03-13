@@ -10,7 +10,7 @@ object TerriForm {
    * Using a class specifically for form binding reduces the chances
    * of a parameter tampering attack and makes code clearer.
    */
-  case class TerritoryData(terr: Int)
+  case class TerritoryData(terr: String)
 
   /**
    * The form definition for the "create a widget" form.
@@ -19,7 +19,7 @@ object TerriForm {
    */
   val terriform = Form(
     mapping(
-      "terr" -> number
+      "terr" -> text
     )(TerritoryData.apply)(TerritoryData.unapply)
   )
 }

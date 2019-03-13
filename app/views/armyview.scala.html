@@ -27,12 +27,16 @@
                 <h3>Map</h3>
                 <div class="name-input">
                 @helper.form(controllers.routes.PlayerFormController.claimTerritories) {
+                    <h5> Enter the Territory You Want or type "Random" for a random territory</h5>
                     @helper.CSRF.formField
 
                     @helper.inputText(form("terr"))
+
                     <button class="pressButton">CLAIM</button>
 
+
                 }</div>
+
                 <table class="map-table">
                     <tbody>
                             @for(i <- 0 until 6) {
