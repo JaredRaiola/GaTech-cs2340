@@ -58,7 +58,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
   def listTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
     Ok(views.html.armyview(players, terrCont, terriform))
   }
-
+  def isAllDigits(x: String) = x forall Character.isDigit
   def claimTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[TerritoryData] =>
       // This is the bad case, where the form had validation errors.
@@ -85,11 +85,9 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
           Ok(views.html.armyview(players, terrCont, terriform))
           val result = "Territory " + randomter + " now has " + terrCont.terrArray(randomter).armyCount + " armies."
           Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result )
-        } else if (data.terr.toLowerCase() != "random") {
-          Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "You inputted an invalid key!")
-        } else if (data.terr.toInt > 47 || data.terr.toInt < 0 || checkTerritory(data.terr.toInt)) {
+        } else if ((isAllDigits(data.terr)) && (data.terr.toInt > 47 || data.terr.toInt < 0 || checkTerritory(data.terr.toInt))) {
           Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there.")
-        } else if (data.terr.toInt <= 47 && data.terr.toInt >= 0) {
+        } else if ((isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0)) {
           terrCont.terrArray(data.terr.toInt).incrementArmy(1)
           terrCont.terrArray(data.terr.toInt).setOwner(players(currPlayerIndex).name)
           players(currPlayerIndex).decrementArmyCount(1)
