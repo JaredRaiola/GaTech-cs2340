@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|EB+Garamond');
 
+html {
+    position: relative;
+    min-height: 100%;
+}
+
 body {
     font-family: 'EB Garamond', serif;
     width: 100%;
@@ -21,10 +26,9 @@ h5 {
 footer {
     position: absolute;
     bottom: 0;
-    left: 0;
-    width: 100%;
+    padding-top: 20px;
     text-align: center;
-    padding: 20px;
+    width: 100%;
 }
 
 .playerList {
