@@ -58,7 +58,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
   }
 
   def listTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
-    Ok(views.html.armyview(players, terrCont, terriform))
+    Ok(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
   }
 
   def isAllDigits(x: String) = x forall Character.isDigit
@@ -68,7 +68,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
       // This is the bad case, where the form had validation errors.
       // Let's show the user the form again, with the errors highlighted.
       // Note how we pass the form with errors to the template.
-      BadRequest(views.html.armyview(players, terrCont, terriform))
+      BadRequest(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
     }
 
     val successFunction = { data: TerritoryData =>
@@ -86,7 +86,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
           terrCont.terrArray(randomter).setOwner(players(currPlayerIndex).name)
           players(currPlayerIndex).decrementArmyCount(1)
           newTurn
-          Ok(views.html.armyview(players, terrCont, terriform))
+          Ok(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
           val result = "Territory " + randomter + " now has " + terrCont.terrArray(randomter).armyCount + " armies."
           Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result)
         } else if ((isAllDigits(data.terr)) && (data.terr.toInt > 47 || data.terr.toInt < 0 || checkTerritory(data.terr.toInt))) {
@@ -96,7 +96,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
           terrCont.terrArray(data.terr.toInt).setOwner(players(currPlayerIndex).name)
           players(currPlayerIndex).decrementArmyCount(1)
           newTurn
-          Ok(views.html.armyview(players, terrCont, terriform))
+          Ok(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
           val result = "Territory " + data.terr + " now has " + terrCont.terrArray(data.terr.toInt).armyCount + " armies."
           Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result)
         } else {
