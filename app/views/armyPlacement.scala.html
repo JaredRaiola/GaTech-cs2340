@@ -1,4 +1,4 @@
-@(players: Seq[Player], terrCont: TerritoryController, form: Form[TerriForm.TerritoryData])(implicit request: MessagesRequestHeader)
+@(players: Seq[Player], terrCont: TerritoryController, form: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
     @main("armyPlacement") {
 
         <html lang="en">
@@ -26,13 +26,13 @@
 
                 <h3>Map</h3>
                 <div class="name-input">
-                @helper.form(controllers.routes.PlayerFormController.claimTerritories) {
-                    <h5> Enter the Territory You Want or type "Random" for a random territory</h5>
+                @helper.form(controllers.routes.PlayerFormController.placeAdditionalArmies) {
+                    <h5> Place your additional armies into one of your own territories</h5>
                     @helper.CSRF.formField
 
                     @helper.inputText(form("terr"))
 
-                    <button class="pressButton">CLAIM</button>
+                    <button class="pressButton">REINFORCE</button>
 
 
                 }</div>

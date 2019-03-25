@@ -19,8 +19,10 @@ import play.api.mvc._
   * for details.
   */
 class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
+
   import PlayerForm._
   import TerriForm._
+  import AdditionalArmiesForm._
 
   private var players = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
   private var terrCont: TerritoryController = _
@@ -40,7 +42,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
   private var currPlayerIndex: Int = 0
 
   def newTurn = {
-    if (currPlayerIndex == players.length-1) {
+    if (currPlayerIndex == players.length - 1) {
       currPlayerIndex = 0
     } else {
       currPlayerIndex += 1
@@ -58,7 +60,9 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
   def listTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
     Ok(views.html.armyview(players, terrCont, terriform))
   }
+
   def isAllDigits(x: String) = x forall Character.isDigit
+
   def claimTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[TerritoryData] =>
       // This is the bad case, where the form had validation errors.
@@ -73,9 +77,9 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
       if (terrCont.terrArray.isEmpty) {
         Redirect(routes.PlayerFormController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else {
-        if (data.terr.toLowerCase() == "random"){
+        if (data.terr.toLowerCase() == "random") {
           var randomter = scala.util.Random.nextInt(47)
-          while(checkTerritory(randomter)){
+          while (checkTerritory(randomter)) {
             randomter = scala.util.Random.nextInt(47)
           }
           terrCont.terrArray(randomter).incrementArmy(1)
@@ -84,7 +88,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
           newTurn
           Ok(views.html.armyview(players, terrCont, terriform))
           val result = "Territory " + randomter + " now has " + terrCont.terrArray(randomter).armyCount + " armies."
-          Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result )
+          Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result)
         } else if ((isAllDigits(data.terr)) && (data.terr.toInt > 47 || data.terr.toInt < 0 || checkTerritory(data.terr.toInt))) {
           Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there.")
         } else if ((isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0)) {
@@ -94,7 +98,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
           newTurn
           Ok(views.html.armyview(players, terrCont, terriform))
           val result = "Territory " + data.terr + " now has " + terrCont.terrArray(data.terr.toInt).armyCount + " armies."
-          Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result )
+          Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result)
         } else {
           Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "You inputted an invalid key!")
         }
@@ -122,14 +126,14 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
     val successFunction = { data: Data =>
       // This is the good case, where the form was successfully parsed as a Data object.
       val player = new Player(data.name, 0, 0)
-      if (!players.isEmpty){
+      if (!players.isEmpty) {
         if (players.contains(player)) {
           Redirect(routes.PlayerFormController.listPlayers()).flashing("Warning" -> "Please enter a unique name!")
         } else if (players.length < 6) {
           players.append(player)
           players = scala.util.Random.shuffle(players)
-          for(w <- players) {
-            w.setArmyCount(35 - (5* (players.length-3)))
+          for (w <- players) {
+            w.setArmyCount(35 - (5 * (players.length - 3)))
           }
           if (players.length < 3) {
             val numplayR = 3 - players.length
@@ -147,14 +151,43 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
         players.append(player)
         val numplayR = 3 - players.length
         val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
-        for(w <- players) {
-          w.setArmyCount(35 - (5* (players.length-3)))
+        for (w <- players) {
+          w.setArmyCount(35 - (5 * (players.length - 3)))
         }
-        Redirect(routes.PlayerFormController.listPlayers()).flashing("Note"  -> playremain)
+        Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
       }
     }
 
     val formValidationResult = form.bindFromRequest
+    formValidationResult.fold(errorFunction, successFunction)
+  }
+
+
+
+
+
+
+
+
+
+  def updatePlacements = Action { implicit request: MessagesRequest[AnyContent] =>
+    // Pass an unpopulated form to the template
+    Ok(views.html.armyPlacement(players, terrCont, additionalArmiesForm ))
+  }
+
+  def placeAdditionalArmies = Action { implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[AdditionalArmiesData] =>
+      // This is the bad case, where the form had validation errors.
+      // Let's show the user the form again, with the errors highlighted.
+      // Note how we pass the form with errors to the template.
+      BadRequest(views.html.armyPlacement(players, terrCont, additionalArmiesForm))
+    }
+
+    val successFunction = { data: AdditionalArmiesData =>
+      // This is the good case, where the form was successfully parsed as a Data object.
+      Ok(views.html.armyPlacement(players, terrCont, additionalArmiesForm))
+    }
+    val formValidationResult = additionalArmiesForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
   }
 }
