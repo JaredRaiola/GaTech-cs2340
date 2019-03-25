@@ -1,10 +1,10 @@
-@(players: Seq[Player], currPlayerIndex: Int, terrCont: TerritoryController, form: Form[TerriForm.TerritoryData])(implicit request: MessagesRequestHeader)
-    @main("armyview") {
+@(players: Seq[Player], terrCont: TerritoryController, additionalArmiesForm: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
+    @main("armyPlacement") {
 
         <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                <title>Review Your Armies</title>
+                <title>Place Your Armies</title>
             </head>
             <body>
                 <h3>Players</h3>
@@ -14,12 +14,7 @@
                     </thead>
                     <tbody>
                     @for(w <- players) {
-                        @if(players(currPlayerIndex).equals(w)) {
-                            <tr bgcolor="#228b22"><td>@w.name</td> <td>@w.armyBinCount</td></tr>
-                        }@if(!players(currPlayerIndex).equals(w)){
-                            <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
-                        }
-
+                        <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
                     }
                     </tbody>
                 </table>
@@ -31,13 +26,15 @@
 
                 <h3>Map</h3>
                 <div class="name-input">
-                @helper.form(controllers.routes.PlayerFormController.claimTerritories) {
-                    <h5> Enter the Territory You Want or type "Random" for a random territory</h5>
+                @helper.form(controllers.routes.PlayerFormController.placeAdditionalArmies) {
+                    <h5> Place your additional armies into one of your own territories</h5>
                     @helper.CSRF.formField
+                    <h5>Enter the territory you want to reinforce</h5>
+                    @helper.inputText(additionalArmiesForm("terr"))
+                    <h5>Enter how many armies you want it to have</h5>
+                    @helper.inputText(additionalArmiesForm("numArmies"))
 
-                    @helper.inputText(form("terr"))
-
-                    <button class="pressButton">CLAIM</button>
+                    <button class="pressButton">REINFORCE</button>
 
 
                 }</div>

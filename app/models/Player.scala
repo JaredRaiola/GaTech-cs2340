@@ -1,6 +1,6 @@
 package models
 
-class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0) {
+class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0, var territoryCount: Int = 0 ) {
   //turn mode 0 is not their turn, 1 is place armies, 2 is attack, 3 is move, then 0
   //  def updateBinCount   depending on how many territories they own
 
@@ -21,6 +21,18 @@ class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0)
 
   def decrementArmyCount(amount: Int) = {
     armyBinCount -= amount
+  }
+
+  def incrementArmyCount(amount: Int) = {
+    armyBinCount += amount
+  }
+
+  def decrementTerritoryCount(amount: Int) = {
+    territoryCount -= amount
+  }
+
+  def incrementTerritoryCount(amount: Int) = {
+    territoryCount += amount
   }
 
   def selectEnemyTerritory(terr: Territory): Boolean = {
