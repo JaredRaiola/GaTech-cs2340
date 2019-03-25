@@ -47,6 +47,8 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
     } else {
       currPlayerIndex += 1
     }
+    turnCounter += 1
+
   }
 
   def checkTerritory(terrIndex: Int): Boolean = {
@@ -63,6 +65,9 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
 
   def isAllDigits(x: String) = x forall Character.isDigit
 
+  private var turnCounter: Int = 0
+
+
   def claimTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[TerritoryData] =>
       // This is the bad case, where the form had validation errors.
@@ -71,37 +76,41 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
       BadRequest(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
     }
 
+
     val successFunction = { data: TerritoryData =>
       // This is the good case, where the form was successfully parsed as a Data object.
-
+      var terrIndex = -1
       if (terrCont.terrArray.isEmpty) {
         Redirect(routes.PlayerFormController.listTerritories()).flashing("Huh" -> "Something went wrong.")
-      } else {
-        if (data.terr.toLowerCase() == "random") {
+      } else if (data.terr.toLowerCase() == "random") {
           var randomter = scala.util.Random.nextInt(47)
           while (checkTerritory(randomter)) {
             randomter = scala.util.Random.nextInt(47)
           }
-          terrCont.terrArray(randomter).incrementArmy(1)
-          terrCont.terrArray(randomter).setOwner(players(currPlayerIndex).name)
-          players(currPlayerIndex).decrementArmyCount(1)
-          newTurn
+          terrIndex = randomter
+      } else if ((isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0)) {
+          terrIndex = data.terr.toInt
+      }
+      if (terrIndex != -1) {
+        //success
+        terrCont.terrArray(terrIndex).incrementArmy(1)
+        terrCont.terrArray(terrIndex).setOwner(players(currPlayerIndex).name)
+        players(currPlayerIndex).decrementArmyCount(1)
+        newTurn
+        //now check turncounter
+        if (turnCounter != terrCont.terrArray.size) {
           Ok(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
-          val result = "Territory " + randomter + " now has " + terrCont.terrArray(randomter).armyCount + " armies."
-          Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result)
-        } else if ((isAllDigits(data.terr)) && (data.terr.toInt > 47 || data.terr.toInt < 0 || checkTerritory(data.terr.toInt))) {
-          Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there.")
-        } else if ((isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0)) {
-          terrCont.terrArray(data.terr.toInt).incrementArmy(1)
-          terrCont.terrArray(data.terr.toInt).setOwner(players(currPlayerIndex).name)
-          players(currPlayerIndex).decrementArmyCount(1)
-          newTurn
-          Ok(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
-          val result = "Territory " + data.terr + " now has " + terrCont.terrArray(data.terr.toInt).armyCount + " armies."
+          val result = "Territory " + terrIndex + " now has " + terrCont.terrArray(terrIndex).armyCount + " armies."
           Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result)
         } else {
-          Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "You inputted an invalid key!")
+          // all territories should now be claimed
+          //Ok(views.html.armyPlacement(players, terrCont, terriform)
+          //next line is a stub, it must be switched to the new view
+          Ok(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
         }
+      } else {
+        //failure
+        Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there.")
       }
     }
 
