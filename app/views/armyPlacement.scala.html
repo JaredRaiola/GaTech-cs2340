@@ -1,4 +1,4 @@
-@(players: Seq[Player], terrCont: TerritoryController, form: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
+@(players: Seq[Player], terrCont: TerritoryController, additionalArmiesForm: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
     @main("armyPlacement") {
 
         <html lang="en">
@@ -29,8 +29,10 @@
                 @helper.form(controllers.routes.PlayerFormController.placeAdditionalArmies) {
                     <h5> Place your additional armies into one of your own territories</h5>
                     @helper.CSRF.formField
-
-                    @helper.inputText(form("terr"))
+                    <h5>Enter the territory you want to reinforce</h5>
+                    @helper.inputText(additionalArmiesForm("terr"))
+                    <h5>Enter how many armies you want it to have</h5>
+                    @helper.inputText(additionalArmiesForm("numArmies"))
 
                     <button class="pressButton">REINFORCE</button>
 

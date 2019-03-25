@@ -19,7 +19,7 @@ object AdditionalArmiesForm {
    */
   val additionalArmiesForm = Form(
     mapping(
-      "name" -> nonEmptyText,
+      "terr" -> nonEmptyText,
       "numArmies" -> nonEmptyText
     )(AdditionalArmiesData.apply)(AdditionalArmiesData.unapply)
   )
