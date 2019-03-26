@@ -80,7 +80,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
     val successFunction = { data: TerritoryData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
-      if (terrCont.terrArray.isEmpty) {
+      if (terrCont.terrArray.isEmpty || players.size < 3) {
         Redirect(routes.PlayerFormController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else if (data.terr.toLowerCase() == "random") {
           var randomter = scala.util.Random.nextInt(47)
@@ -88,7 +88,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
             randomter = scala.util.Random.nextInt(47)
           }
           terrIndex = randomter
-      } else if ((isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0)) {
+      } else if ((isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0) && terrCont.terrArray(data.terr.toInt).ownerName == "") {
           terrIndex = data.terr.toInt
       }
       if (terrIndex != -1) {
@@ -103,10 +103,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
           val result = "Territory " + terrIndex + " now has " + terrCont.terrArray(terrIndex).armyCount + " armies."
           Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result)
         } else {
-          // all territories should now be claimed
-          //Ok(views.html.armyPlacement(players, terrCont, terriform)
-          //next line is a stub, it must be switched to the new view
-          Ok(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
+          Ok(views.html.armyPlacement(players, terrCont, additionalArmiesForm))
         }
       } else {
         //failure
