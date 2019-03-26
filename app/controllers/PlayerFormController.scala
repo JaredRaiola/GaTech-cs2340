@@ -80,7 +80,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
     val successFunction = { data: TerritoryData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
-      if (terrCont.terrArray.isEmpty) {
+      if (terrCont.terrArray.isEmpty || players.size < 3) {
         Redirect(routes.PlayerFormController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else if (data.terr.toLowerCase() == "random") {
           var randomter = scala.util.Random.nextInt(47)
