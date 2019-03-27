@@ -2,7 +2,7 @@ build
 logs
 *.idea
 
-#*#
+*#
 *~
 target
 /.idea
