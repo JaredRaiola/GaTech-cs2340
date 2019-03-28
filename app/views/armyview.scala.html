@@ -49,14 +49,11 @@
                                     @for(j <- 0 until 8) {
                                         @{
                                             var num = i * 8 + j
-                                            <td class="map-unit">
+                                            <td class={"cont" + terrArray(num).cont + " map-unit"}>
                                             <h3>Territory</h3>
                                             <h3>{num}</h3>
                                             <p>Owner: {terrArray(num).getOwner}</p>
                                             <p>Armies: {terrArray(num).armyCount}</p>
-
-
-
                                             </td>
                                         }
                                     }
