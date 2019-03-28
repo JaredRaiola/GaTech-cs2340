@@ -30,7 +30,7 @@
 
                 <h3>Map</h3>
                 <div class="name-input">
-                @helper.form(controllers.routes.PlayerFormController.placeAdditionalArmies) {
+                @helper.form(controllers.routes.TerritoryController.placeAdditionalArmies) {
                     <h5> Place your additional armies into one of your own territories</h5>
                     @helper.CSRF.formField
                     <h5>Enter the territory you want to reinforce</h5>
