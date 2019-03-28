@@ -1,4 +1,4 @@
-@(players: Seq[Player], currPlayerIndex: Int, terrCont: TerritoryController, form: Form[TerriForm.TerritoryData])(implicit request: MessagesRequestHeader)
+@(players: Seq[Player], currPlayerIndex: Int, terrArray: Array[Territory], form: Form[TerriForm.TerritoryData])(implicit request: MessagesRequestHeader)
     @main("armyview") {
 
         <html lang="en">
@@ -31,7 +31,7 @@
 
                 <h3>Map</h3>
                 <div class="name-input">
-                @helper.form(controllers.routes.PlayerFormController.claimTerritories) {
+                @helper.form(controllers.routes.TerritoryController.claimTerritories) {
                     <h5> Enter the Territory You Want or type "Random" for a random territory</h5>
                     @helper.CSRF.formField
 
@@ -52,8 +52,8 @@
                                             <td class="map-unit">
                                             <h3>Territory</h3>
                                             <h3>{num}</h3>
-                                            <p>Owner: {terrCont.terrArray(num).getOwner}</p>
-                                            <p>Armies: {terrCont.terrArray(num).armyCount}</p>
+                                            <p>Owner: {terrArray(num).getOwner}</p>
+                                            <p>Armies: {terrArray(num).armyCount}</p>
 
 
 

@@ -22,7 +22,7 @@ class ArmySetUpController @Inject()(cc: MessagesControllerComponents) extends Me
 
 
 
-  def createArmySetUpController(players: ArrayBuffer[Player], terrCont: TerritoryController) = {
+  def createArmySetUpController(players: ArrayBuffer[Player], terrArray: Array[Territory]) = {
   }
 
   val players: ArrayBuffer[Player] = null
@@ -42,7 +42,7 @@ class ArmySetUpController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   def checkTerritory(terrIndex: Int): Boolean = {
-    terrCont.terrArray(terrIndex).ownerName != ""
+    GameData.terrArray(terrIndex).ownerName != ""
   }
 
   /*def claimTerritory(terrIndex: Int) = Action { //implicit request: MessagesRequest[AnyContent] =>

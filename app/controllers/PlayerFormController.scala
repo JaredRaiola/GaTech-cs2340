@@ -21,103 +21,28 @@ import play.api.mvc._
 class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
 
   import PlayerForm._
-  import TerriForm._
+  //import TerriForm._
   import AdditionalArmiesForm._
 
-  private var players = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
-  private var terrCont: TerritoryController = _
+  //private var players = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
+  //private var terrCont: TerritoryController = _
 
   // The URL to the widget.  You can call this directly from the template, but it
   // can be more convenient to leave the template completely stateless i.e. all
   // of the "WidgetController" references are inside the .scala file.
   private val postUrl = routes.PlayerFormController.createPlayer()
-  players.remove(0)
-
-
-  val terrArray = new Array[Territory](48)
-  for (i <- terrArray.indices) {
-    terrArray(i) = new Territory("TerritoryName" + i, "", 0)
-  }
-  terrCont = new TerritoryController(terrArray)
-  private var currPlayerIndex: Int = 0
-
-  def newTurn = {
-    if (currPlayerIndex == players.length - 1) {
-      currPlayerIndex = 0
-    } else {
-      currPlayerIndex += 1
-    }
-    turnCounter += 1
-
-  }
-
-  def checkTerritory(terrIndex: Int): Boolean = {
-    terrCont.terrArray(terrIndex).ownerName != ""
-  }
+  GameData.players.remove(0)
 
   def index = Action {
     Ok(views.html.index())
   }
 
-  def listTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
-    Ok(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
-  }
 
   def isAllDigits(x: String) = x forall Character.isDigit
 
-  private var turnCounter: Int = 0
-
-
-  def claimTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
-    val errorFunction = { formWithErrors: Form[TerritoryData] =>
-      // This is the bad case, where the form had validation errors.
-      // Let's show the user the form again, with the errors highlighted.
-      // Note how we pass the form with errors to the template.
-      BadRequest(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
-    }
-
-
-    val successFunction = { data: TerritoryData =>
-      // This is the good case, where the form was successfully parsed as a Data object.
-      var terrIndex = -1
-      if (terrCont.terrArray.isEmpty || players.size < 3) {
-        Redirect(routes.PlayerFormController.listTerritories()).flashing("Huh" -> "Something went wrong.")
-      } else if (data.terr.toLowerCase() == "random") {
-          var randomter = scala.util.Random.nextInt(47)
-          while (checkTerritory(randomter)) {
-            randomter = scala.util.Random.nextInt(47)
-          }
-          terrIndex = randomter
-      } else if ((isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0) && terrCont.terrArray(data.terr.toInt).ownerName == "") {
-          terrIndex = data.terr.toInt
-      }
-      if (terrIndex != -1) {
-        //success
-        terrCont.terrArray(terrIndex).incrementArmy(1)
-        terrCont.terrArray(terrIndex).setOwner(players(currPlayerIndex).name)
-        players(currPlayerIndex).decrementArmyCount(1)
-        newTurn
-        //now check turncounter
-        if (turnCounter != terrCont.terrArray.size) {
-          Ok(views.html.armyview(players, currPlayerIndex, terrCont, terriform))
-          val result = "Territory " + terrIndex + " now has " + terrCont.terrArray(terrIndex).armyCount + " armies."
-          Redirect(routes.PlayerFormController.listTerritories()).flashing("Tubular! " -> result)
-        } else {
-          Ok(views.html.armyPlacement(players, terrCont, additionalArmiesForm))
-        }
-      } else {
-        //failure
-        Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there.")
-      }
-    }
-
-    val formValidationResult = terriform.bindFromRequest
-    formValidationResult.fold(errorFunction, successFunction)
-  }
-
   def listPlayers = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
-    Ok(views.html.listPlayers(players, form, postUrl))
+    Ok(views.html.listPlayers(GameData.players, form, postUrl))
   }
 
   // This will be the action that handles our form post
@@ -126,27 +51,27 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
       // This is the bad case, where the form had validation errors.
       // Let's show the user the form again, with the errors highlighted.
       // Note how we pass the form with errors to the template.
-      BadRequest(views.html.listPlayers(players, formWithErrors, postUrl))
+      BadRequest(views.html.listPlayers(GameData.players, formWithErrors, postUrl))
     }
 
     val successFunction = { data: Data =>
       // This is the good case, where the form was successfully parsed as a Data object.
       val player = new Player(data.name, 0, 0)
-      if (!players.isEmpty) {
-        if (players.contains(player)) {
+      if (!GameData.players.isEmpty) {
+        if (GameData.players.contains(player)) {
           Redirect(routes.PlayerFormController.listPlayers()).flashing("Warning" -> "Please enter a unique name!")
-        } else if (players.length < 6) {
-          players.append(player)
-          players = scala.util.Random.shuffle(players)
-          for (w <- players) {
-            w.setArmyCount(35 - (5 * (players.length - 3)))
+        } else if (GameData.players.length < 6) {
+          GameData.players.append(player)
+          GameData.players = scala.util.Random.shuffle(GameData.players)
+          for (w <- GameData.players) {
+            w.setArmyCount(35 - (5 * (GameData.players.length - 3)))
           }
-          if (players.length < 3) {
-            val numplayR = 3 - players.length
+          if (GameData.players.length < 3) {
+            val numplayR = 3 - GameData.players.length
             val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
             Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
           } else {
-            val numplay = players.length
+            val numplay = GameData.players.length
             val playremain = "You have " + numplay.toString + " player slots filled"
             Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
           }
@@ -154,11 +79,11 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
           Redirect(routes.PlayerFormController.listPlayers()).flashing("Warning" -> "You have entered 6 players already!")
         }
       } else {
-        players.append(player)
-        val numplayR = 3 - players.length
+        GameData.players.append(player)
+        val numplayR = 3 - GameData.players.length
         val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
-        for (w <- players) {
-          w.setArmyCount(35 - (5 * (players.length - 3)))
+        for (w <- GameData.players) {
+          w.setArmyCount(35 - (5 * (GameData.players.length - 3)))
         }
         Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
       }
@@ -178,7 +103,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
 
   def updatePlacements = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
-    Ok(views.html.armyPlacement(players, terrCont, additionalArmiesForm ))
+    Ok(views.html.armyPlacement(GameData.players, GameData.terrArray, additionalArmiesForm ))
   }
 
   def placeAdditionalArmies = Action { implicit request: MessagesRequest[AnyContent] =>
@@ -186,12 +111,12 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
       // This is the bad case, where the form had validation errors.
       // Let's show the user the form again, with the errors highlighted.
       // Note how we pass the form with errors to the template.
-      BadRequest(views.html.armyPlacement(players, terrCont, additionalArmiesForm))
+      BadRequest(views.html.armyPlacement(GameData.players, GameData.terrArray, additionalArmiesForm))
     }
 
     val successFunction = { data: AdditionalArmiesData =>
       // This is the good case, where the form was successfully parsed as a Data object.
-      Ok(views.html.armyPlacement(players, terrCont, additionalArmiesForm))
+      Ok(views.html.armyPlacement(GameData.players, GameData.terrArray, additionalArmiesForm))
     }
     val formValidationResult = additionalArmiesForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)

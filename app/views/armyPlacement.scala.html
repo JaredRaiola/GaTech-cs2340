@@ -1,4 +1,4 @@
-@(players: Seq[Player], terrCont: TerritoryController, additionalArmiesForm: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
+@(players: Seq[Player], terrArray: Array[Territory], additionalArmiesForm: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
     @main("armyPlacement") {
 
         <html lang="en">
@@ -49,8 +49,8 @@
                                             <td class="map-unit">
                                             <h3>Territory</h3>
                                             <h3>{num}</h3>
-                                            <p>Owner: {terrCont.terrArray(num).getOwner}</p>
-                                            <p>Armies: {terrCont.terrArray(num).armyCount}</p>
+                                            <p>Owner: {terrArray(num).getOwner}</p>
+                                            <p>Armies: {terrArray(num).armyCount}</p>
 
 
 
