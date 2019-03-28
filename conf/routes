@@ -17,8 +17,8 @@ GET     /assets/*file                 controllers.Assets.versioned(path="/public
 # initial Territory claiming and setup
 #GET     /armyview                     controllers.ArmySetUpController.claimTerritory(terr: Int)
 
-GET      /armyview                     controllers.PlayerFormController.listTerritories
-POST     /armyview                     controllers.PlayerFormController.claimTerritories
+GET      /armyview                     controllers.TerritoryController.listTerritories
+POST     /armyview                     controllers.TerritoryController.claimTerritories
 
 GET      /armyPlacement                controllers.PlayerFormController.updatePlacements
 POST     /armyPlacement                controllers.PlayerFormController.placeAdditionalArmies
