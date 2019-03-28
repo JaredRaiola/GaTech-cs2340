@@ -83,11 +83,13 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
       if (terrCont.terrArray.isEmpty || players.size < 3) {
         Redirect(routes.PlayerFormController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else if (data.terr.toLowerCase() == "random") {
-          var randomter = scala.util.Random.nextInt(47)
+          var randomter = scala.util.Random.nextInt(48)
           while (checkTerritory(randomter)) {
-            randomter = scala.util.Random.nextInt(47)
+            randomter = scala.util.Random.nextInt(48)
           }
           terrIndex = randomter
+      } else if (data.terr == "") {
+      	Redirect(routes.PlayerFormController.listTerritories()).flashing("Straight-up wack! " -> "Enter a Territory.");
       } else if ((isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0) && terrCont.terrArray(data.terr.toInt).ownerName == "") {
           terrIndex = data.terr.toInt
       }
