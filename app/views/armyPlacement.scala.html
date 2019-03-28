@@ -1,4 +1,4 @@
-@(players: Seq[Player], terrArray: Array[Territory], additionalArmiesForm: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
+@(players: Seq[Player], currPlayerIndex: Int, terrArray: Array[Territory], additionalArmiesForm: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
     @main("armyPlacement") {
 
         <html lang="en">
@@ -14,7 +14,11 @@
                     </thead>
                     <tbody>
                     @for(w <- players) {
-                        <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                        @if(players(currPlayerIndex).equals(w)) {
+                            <tr bgcolor="#228b22"><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                        }@if(!players(currPlayerIndex).equals(w)){
+                            <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                        }
                     }
                     </tbody>
                 </table>
