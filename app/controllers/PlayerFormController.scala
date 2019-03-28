@@ -40,7 +40,6 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
 
   def isAllDigits(x: String) = x forall Character.isDigit
 
-
   def listPlayers = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
     Ok(views.html.listPlayers(GameData.players, form, postUrl))
