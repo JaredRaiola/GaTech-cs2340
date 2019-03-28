@@ -1,6 +1,6 @@
 package models
 
-class Territory(val name: String, var ownerName: String = "", var armyCount: Int = 0, var cont: String = "") {
+class Territory(val name: String, var ownerName: String = "", var armyCount: Int = 0, var cont: Int = 0) {
 
   def incrementArmy(amount: Int) = {
     armyCount += amount
