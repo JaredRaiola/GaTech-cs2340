@@ -165,3 +165,13 @@ footer {
 .map-unit p {
     line-height: 10px;
 }
+
+.cont0 {
+    background-color: lightblue;
+}
+.cont1 {
+    background-color: lightpink;
+}
+.cont2 {
+    background-color: aliceblue;
+}
