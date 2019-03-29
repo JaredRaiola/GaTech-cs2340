@@ -1,0 +1,36 @@
+Existing classes that need to be refactored in M3:
+
+    PlayerFormController.scala
+        Problems:
+            - (as of M2) does not obey single responsibility principle
+            - (as of M2) high cyclomatic complexity in createPlayer()
+        Fixes:
+            - split the functionality into multiple classes (PlayerFormController, TerritoryFormController, etc.)
+            - replace repeated blocks of code with reusable methods
+                - getRemainingMessage()
+                - getExistingMessage()
+                - shufflePlayers()
+                - addPlayer()
+
+    TerritoryFormController.scala
+        Problems:
+            - high cyclomatic complexity in claimTerritories()
+        Fixes:
+            - encapsulate complicated boolean logic into legible private helper methods:
+                - startStateIncomplete()
+                - isAllDigits()
+                - isValidNum()
+                - isInRange()
+                - territoryIsOccupied()
+            - replace repeated blocks of code with reusable methods
+                - getRandomIndex()
+                - fillAll()
+                - assignNewArmies()
+
+
+New entities to add in M3:
+
+    object GameData
+        - a single entity that encapsulates several pieces of data relevant to the current game
+        - is persistent, and therefore its members can be accessed by distinct Controllers
+            - resolves issue of PlayerFormController performing more than one responsibility
