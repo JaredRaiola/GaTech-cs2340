@@ -44,14 +44,19 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       newTurn
     }
   }
+  private def assignNewArmies = {
+    var index = GameData.currPlayerIndex
+    var newArmies = GameData.calculateNewArmies(index)
+    GameData.players(index).incrementArmyCount(newArmies)
+  }
 
   def newTurn:Unit = {
+    GameData.turnCounter += 1
     if (GameData.currPlayerIndex == GameData.players.length - 1) {
       GameData.currPlayerIndex = 0
     } else {
       GameData.currPlayerIndex += 1
     }
-    GameData.turnCounter += 1
   }
 
   def index:Action[AnyContent] = Action {
@@ -90,12 +95,16 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         GameData.terrArray(terrIndex).setOwner(GameData.players(GameData.currPlayerIndex).name)
         GameData.players(GameData.currPlayerIndex).decrementArmyCount(1)
         newTurn
+
         //now check turncounter
         if (GameData.turnCounter != GameData.terrArray.length) {
           Ok(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
+
           val result = "Territory " + terrIndex + " now has " + GameData.terrArray(terrIndex).armyCount + " armies."
           Redirect(routes.TerritoryController.listTerritories()).flashing("Tubular! " -> result)
         } else {
+          //GameData.currPlayerIndex = 0
+          assignNewArmies
           Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
         }
       } else {
@@ -126,19 +135,31 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       var terrIndex = -1
       if (startStateIncomplete) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
-      } else if (isInRange(data.terr) &&
-        GameData.terrArray(data.terr.toInt).ownerName == GameData.players(GameData.currPlayerIndex).name) {
-        terrIndex = data.terr.toInt
+      } else if (isInRange(data.terr)) {
+        if (GameData.terrArray(data.terr.toInt).ownerName == GameData.players(GameData.currPlayerIndex).name) {
+          terrIndex = data.terr.toInt
+        } else {
+          Redirect(routes.TerritoryController.listTerritories()).flashing("You can't do that! " -> "You don't own that territory.")
+        }
+      } else {
+        Redirect(routes.TerritoryController.listTerritories()).flashing("Warning: " -> "This is not a valid territory value.")
       }
       if (data.numArmies <= 0 || data.numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount) {
-          Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "That's an invalid number of armies >:(")
-      } else if (terrIndex != -1) {
-        //success
-          GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
-          GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
-          newTurn
+          Redirect(routes.TerritoryController.updatePlacements).flashing("You and what army? " -> "That's more armies than you have.")
+      } else {
+        if (data.numArmies < GameData.calculateNewArmies(GameData.currPlayerIndex)) {
+          Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "You need to place all of your new armies.")
+        } else {
+          if (terrIndex != -1) {
+            //success
+            GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
+            GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
+            newTurn
+            assignNewArmies
+          }
+          Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
+        }
       }
-      Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
     }
     val formValidationResult = additionalArmiesForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
