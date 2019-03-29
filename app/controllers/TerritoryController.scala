@@ -23,6 +23,11 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   import TerriForm._
   import AdditionalArmiesForm._
 
+  private def isAllDigits(x: String) = x forall Character.isDigit
+  private def startStateCorrect = GameData.terrArray.isEmpty || GameData.players.size < 3
+  private def isValidNum(str: String) = str != "" && isAllDigits(str)
+  private def isInRange(str: String) = str.toInt <= 47 && str.toInt >= 0
+
   def newTurn:Unit = {
     if (GameData.currPlayerIndex == GameData.players.length - 1) {
       GameData.currPlayerIndex = 0
@@ -43,9 +48,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   def listTerritories:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     Ok(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
   }
-
-  def isAllDigits(x: String):Boolean = x forall Character.isDigit
-
 
   def claimTerritories:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[TerritoryData] =>
@@ -93,20 +95,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val formValidationResult = terriform.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
   }
-
-  private def startStateCorrect = {
-    (GameData.terrArray.isEmpty || GameData.players.size < 3)
-  }
-
-  private def isValidNum(str: String) = {
-    (str != "" && isAllDigits(str))
-  }
-
-  private def isInRange(str: String) = {
-    (str.toInt <= 47 && str.toInt >= 0)
-  }
-
-
 
   def updatePlacements:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
