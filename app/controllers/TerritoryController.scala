@@ -35,6 +35,15 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     }
     randomter
   }
+  private def fillAll = {
+    for (w <- 0 until (48 - GameData.turnCounter)) {
+      var terrIndex = getRandomIndex
+      GameData.terrArray(terrIndex).incrementArmy(1)
+      GameData.terrArray(terrIndex).setOwner(GameData.players(GameData.currPlayerIndex).name)
+      GameData.players(GameData.currPlayerIndex).decrementArmyCount(1)
+      newTurn
+    }
+  }
 
   def newTurn:Unit = {
     if (GameData.currPlayerIndex == GameData.players.length - 1) {
@@ -64,6 +73,9 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val successFunction = { data: TerritoryData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
+      if (data.terr.toLowerCase() == "fillall") {
+        fillAll
+      }
       if (startStateIncomplete) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else if (data.terr.toLowerCase() == "random") {
@@ -96,8 +108,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   def updatePlacements:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
-    // Pass an unpopulated form to the template
-    Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm ))
+    Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
   }
 
   def placeAdditionalArmies:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
@@ -113,8 +124,9 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       var terrIndex = -1
       if (startStateIncomplete) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
-      } else if (isInRange(data.terr) && !territoryIsOccupied(data.terr.toInt)) {
-          terrIndex = data.terr.toInt
+      } else if (isInRange(data.terr) &&
+        GameData.terrArray(data.terr.toInt).ownerName == GameData.players(GameData.currPlayerIndex).name) {
+        terrIndex = data.terr.toInt
       }
       if (data.numArmies <= 0 || data.numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount) {
           Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "That's an invalid number of armies >:(")
