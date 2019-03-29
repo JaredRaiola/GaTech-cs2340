@@ -51,6 +51,16 @@ footer {
     padding: 10px;
     background-color: pink;
     border-radius: 5px;
+    box-sizing: border-box;
+}
+.new-armies {
+    padding: 10px;
+    background-color: darkseagreen;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+.new-armies p {
+    padding-left: 15px;
 }
 
 .name-input input[type=text] {
@@ -138,7 +148,6 @@ footer {
     display: inline-block;
     width: 120px;
     height: 120px;
-
     background-color: white;
     color: gray;
 
@@ -149,7 +158,6 @@ footer {
 }
 
 .map-unit:hover {
-    background-color: darkgreen;
     box-shadow: 0 8px 17px rgba(0,0,0,.4);
     color: white;
     cursor: pointer;
@@ -163,7 +171,16 @@ footer {
 }
 
 .map-unit p {
-    line-height: 10px;
+    line-height: 20px;
+    margin: 0;
+}
+
+.map-unit.indeed-owned {
+    background-color: darkgreen;
+}
+
+.map-unit.indeed-owned:hover {
+    background-color: darkgreen;
 }
 
 .cont0 {
@@ -174,4 +191,15 @@ footer {
 }
 .cont2 {
     background-color: aliceblue;
+}
+
+.cont0:hover {
+    background-color: cornflowerblue;
+}
+.cont1:hover {
+    background-color: palevioletred;
+}
+.cont2:hover {
+    background-color: white;
+    color: black;
 }
