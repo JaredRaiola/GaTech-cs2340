@@ -16,4 +16,12 @@ object GameData {
     if (i >= 32 && i <= 47) continent = 2
     terrArray(i) = new Territory("TerritoryName" + i, "", 0, continent)
   }
+
+  def getCurrentPlayer = {
+    players(currPlayerIndex)
+  }
+
+  def calculateNewArmies(index: Int) = {
+    10
+  }
 }
