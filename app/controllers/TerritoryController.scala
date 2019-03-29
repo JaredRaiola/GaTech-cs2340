@@ -23,7 +23,20 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   import TerriForm._
   import AdditionalArmiesForm._
 
-  def newTurn = {
+  private def startStateCorrect = GameData.terrArray.isEmpty || GameData.players.size < 3
+  private def isAllDigits(x: String) = x forall Character.isDigit
+  private def isValidNum(str: String) = str != "" && isAllDigits(str)
+  private def isInRange(str: String) = str.toInt <= 47 && str.toInt >= 0
+  private def checkTerritory(terrIndex: Int): Boolean = GameData.terrArray(terrIndex).ownerName != ""
+  private def getRandomTerr = {
+    var randomter = scala.util.Random.nextInt(GameData.numTerritories - 1)
+    while (checkTerritory(randomter)) {
+      randomter = scala.util.Random.nextInt(GameData.numTerritories - 1)
+    }
+    randomter
+  }
+
+  def newTurn:Unit = {
     if (GameData.currPlayerIndex == GameData.players.length - 1) {
       GameData.currPlayerIndex = 0
     } else {
@@ -32,22 +45,15 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     GameData.turnCounter += 1
   }
 
-  def checkTerritory(terrIndex: Int): Boolean = {
-    GameData.terrArray(terrIndex).ownerName != ""
-  }
-
-  def index = Action {
+  def index:Action[AnyContent] = Action {
     Ok(views.html.index())
   }
 
-  def listTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
+  def listTerritories:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     Ok(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
   }
 
-  def isAllDigits(x: String) = x forall Character.isDigit
-
-
-  def claimTerritories = Action { implicit request: MessagesRequest[AnyContent] =>
+  def claimTerritories:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[TerritoryData] =>
       // This is the bad case, where the form had validation errors.
       // Let's show the user the form again, with the errors highlighted.
@@ -55,19 +61,14 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       BadRequest(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
     }
 
-
     val successFunction = { data: TerritoryData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
-      if (GameData.terrArray.isEmpty || GameData.players.size < 3) {
+      if (startStateCorrect) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else if (data.terr.toLowerCase() == "random") {
-        var randomter = scala.util.Random.nextInt(47)
-        while (checkTerritory(randomter)) {
-          randomter = scala.util.Random.nextInt(47)
-        }
-        terrIndex = randomter
-      } else if (data.terr != "" && (isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0) && GameData.terrArray(data.terr.toInt).ownerName == "") {
+        terrIndex = getRandomTerr
+      } else if (isValidNum(data.terr) && isInRange(data.terr) && GameData.terrArray(data.terr.toInt).ownerName == "") {
         terrIndex = data.terr.toInt
       }
       if (terrIndex != -1) {
@@ -77,7 +78,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         GameData.players(GameData.currPlayerIndex).decrementArmyCount(1)
         newTurn
         //now check turncounter
-        if (GameData.turnCounter != GameData.terrArray.size) {
+        if (GameData.turnCounter != GameData.terrArray.length) {
           Ok(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
           val result = "Territory " + terrIndex + " now has " + GameData.terrArray(terrIndex).armyCount + " armies."
           Redirect(routes.TerritoryController.listTerritories()).flashing("Tubular! " -> result)
@@ -94,14 +95,12 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     formValidationResult.fold(errorFunction, successFunction)
   }
 
-
-
-  def updatePlacements = Action { implicit request: MessagesRequest[AnyContent] =>
+  def updatePlacements:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
     Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm ))
   }
 
-  def placeAdditionalArmies = Action { implicit request: MessagesRequest[AnyContent] =>
+  def placeAdditionalArmies:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[AdditionalArmiesData] =>
       // This is the bad case, where the form had validation errors.
       // Let's show the user the form again, with the errors highlighted.
@@ -111,10 +110,10 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
 
     val successFunction = { data: AdditionalArmiesData =>
       // This is the good case, where the form was successfully parsed as a Data object.
-      var terrIndex = -1;
-      if (GameData.terrArray.isEmpty || GameData.players.size < 3) {
+      var terrIndex = -1
+      if (startStateCorrect) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
-      } else if (data.terr != "" && (isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0) && GameData.terrArray(data.terr.toInt).ownerName == "") {
+      } else if (isValidNum(data.terr) && isInRange(data.terr) && GameData.terrArray(data.terr.toInt).ownerName == "") {
           terrIndex = data.terr.toInt
       }
       if (data.numArmies <= 0 || data.numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount) {
