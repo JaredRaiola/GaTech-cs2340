@@ -6,9 +6,9 @@ object GameData {
   var players = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
   var currPlayerIndex: Int = 0
 
-
+  val numTerritories = 48
   var turnCounter: Int = 0
-  val terrArray = new Array[Territory](48)
+  val terrArray = new Array[Territory](numTerritories)
   for (i <- terrArray.indices) {
     var continent:Int = 0
     if (i >= 0 && i <= 15) continent = 0

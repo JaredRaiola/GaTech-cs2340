@@ -21,32 +21,21 @@ import play.api.mvc._
 class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
 
   import PlayerForm._
-  //import TerriForm._
-  import AdditionalArmiesForm._
 
-  //private var players = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
-  //private var terrCont: TerritoryController = _
-
-  // The URL to the widget.  You can call this directly from the template, but it
-  // can be more convenient to leave the template completely stateless i.e. all
-  // of the "WidgetController" references are inside the .scala file.
   private val postUrl = routes.PlayerFormController.createPlayer()
   GameData.players.remove(0)
 
-  def index = Action {
+  def index:Action[AnyContent] = Action {
     Ok(views.html.index())
   }
 
-
-  def isAllDigits(x: String) = x forall Character.isDigit
-
-  def listPlayers = Action { implicit request: MessagesRequest[AnyContent] =>
+  def listPlayers:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
     Ok(views.html.listPlayers(GameData.players, form, postUrl))
   }
 
   // This will be the action that handles our form post
-  def createPlayer = Action { implicit request: MessagesRequest[AnyContent] =>
+  def createPlayer:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[Data] =>
       // This is the bad case, where the form had validation errors.
       // Let's show the user the form again, with the errors highlighted.
@@ -57,49 +46,47 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
     val successFunction = { data: Data =>
       // This is the good case, where the form was successfully parsed as a Data object.
       val player = new Player(data.name, 0, 0)
-      if (!GameData.players.isEmpty) {
+      if (GameData.players.nonEmpty) {
         if (GameData.players.contains(player)) {
           Redirect(routes.PlayerFormController.listPlayers()).flashing("Warning" -> "Please enter a unique name!")
         } else if (GameData.players.length < 6) {
-          GameData.players.append(player)
-          GameData.players = scala.util.Random.shuffle(GameData.players)
-          for (w <- GameData.players) {
-            w.setArmyCount(35 - (5 * (GameData.players.length - 3)))
-          }
-          if (GameData.players.length < 3) {
-            val numplayR = 3 - GameData.players.length
-            val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
-            Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
-          } else {
-            val numplay = GameData.players.length
-            val playremain = "You have " + numplay.toString + " player slots filled"
-            Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
-          }
+          addPlayer(player)
+          shufflePlayers
+          val remainMessage:String = if (GameData.players.length < 3) getRemainingMessage else getExistingMessage
+          Redirect(routes.PlayerFormController.listPlayers()).flashing("Note: " -> remainMessage)
         } else {
           Redirect(routes.PlayerFormController.listPlayers()).flashing("Warning" -> "You have entered 6 players already!")
         }
       } else {
-        GameData.players.append(player)
-        val numplayR = 3 - GameData.players.length
-        val playremain = "You have " + numplayR.toString + " player slots remaining in order to play"
-        for (w <- GameData.players) {
-          w.setArmyCount(35 - (5 * (GameData.players.length - 3)))
-        }
-        Redirect(routes.PlayerFormController.listPlayers()).flashing("Note" -> playremain)
+        addPlayer(player)
+        val remainMessage:String = getRemainingMessage
+        Redirect(routes.PlayerFormController.listPlayers()).flashing("Note: " -> remainMessage)
       }
     }
-
     val formValidationResult = form.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
   }
 
+  private def getRemainingMessage:String = {
+    val remainingPlayersNeeded = 3 - GameData.players.length
+    val remainMessage = "You have " + remainingPlayersNeeded + " player slots remaining in order to play"
+    remainMessage
+  }
 
+  private def getExistingMessage:String = {
+    val remainingPlayersPresent = GameData.players.length
+    val remainMessage = "You have " + remainingPlayersPresent + " player slots filled."
+    remainMessage
+  }
 
+  private def shufflePlayers = {
+    GameData.players = scala.util.Random.shuffle(GameData.players)
+  }
 
-
-
-
-
-
-
+  private def addPlayer(player: Player) = {
+    GameData.players.append(player)
+    for (w <- GameData.players) {
+      w.setArmyCount(35 - (5 * (GameData.players.length - 3)))
+    }
+  }
 }
