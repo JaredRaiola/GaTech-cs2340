@@ -73,7 +73,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val successFunction = { data: TerritoryData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
-      var done = 0
       if (startStateIncomplete) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else if (data.terr.toLowerCase() == "all random") {
