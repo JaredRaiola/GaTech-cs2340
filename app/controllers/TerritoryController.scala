@@ -107,7 +107,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         }
       } else {
         //failure
-        Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
         Redirect(routes.TerritoryController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there!")
       }
     }
