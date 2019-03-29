@@ -1,6 +1,5 @@
 package controllers
 
-
 import javax.inject.Inject
 import models.Player
 import models.Territory
@@ -23,15 +22,16 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   import TerriForm._
   import AdditionalArmiesForm._
 
-  private def startStateCorrect = GameData.terrArray.isEmpty || GameData.players.size < 3
+  private def startStateIncomplete = GameData.terrArray.isEmpty || GameData.players.size < 3
   private def isAllDigits(x: String) = x forall Character.isDigit
   private def isValidNum(str: String) = str != "" && isAllDigits(str)
-  private def isInRange(str: String) = str.toInt <= 47 && str.toInt >= 0
-  private def checkTerritory(terrIndex: Int): Boolean = GameData.terrArray(terrIndex).ownerName != ""
-  private def getRandomTerr = {
-    var randomter = scala.util.Random.nextInt(GameData.numTerritories - 1)
-    while (checkTerritory(randomter)) {
-      randomter = scala.util.Random.nextInt(GameData.numTerritories - 1)
+  private def isInRange(str: String) = isValidNum(str) && str.toInt <= 47 && str.toInt >= 0
+  private def territoryIsOccupied(terrIndex: Int): Boolean = GameData.terrArray(terrIndex).ownerName != ""
+  private def getRandomIndex = {
+    var randomter = scala.util.Random.nextInt(GameData.numTerritories)
+    var iterations = 0
+    while (territoryIsOccupied(randomter)) {
+      randomter = scala.util.Random.nextInt(GameData.numTerritories)
     }
     randomter
   }
@@ -64,11 +64,11 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val successFunction = { data: TerritoryData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
-      if (startStateCorrect) {
+      if (startStateIncomplete) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else if (data.terr.toLowerCase() == "random") {
-        terrIndex = getRandomTerr
-      } else if (isValidNum(data.terr) && isInRange(data.terr) && GameData.terrArray(data.terr.toInt).ownerName == "") {
+        terrIndex = getRandomIndex
+      } else if (isInRange(data.terr) && !territoryIsOccupied(data.terr.toInt)) {
         terrIndex = data.terr.toInt
       }
       if (terrIndex != -1) {
@@ -111,13 +111,13 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val successFunction = { data: AdditionalArmiesData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
-      if (startStateCorrect) {
+      if (startStateIncomplete) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
-      } else if (isValidNum(data.terr) && isInRange(data.terr) && GameData.terrArray(data.terr.toInt).ownerName == "") {
+      } else if (isInRange(data.terr) && !territoryIsOccupied(data.terr.toInt)) {
           terrIndex = data.terr.toInt
       }
       if (data.numArmies <= 0 || data.numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount) {
-          //Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "That's an invalid number of armies >:(")
+          Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "That's an invalid number of armies >:(")
       } else if (terrIndex != -1) {
         //success
           GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
