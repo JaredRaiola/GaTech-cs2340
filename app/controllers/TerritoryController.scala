@@ -36,7 +36,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     randomter
   }
   private def fillAll = {
-    for (w <- 0 until (48 - GameData.turnCounter)) {
+    for (w <- 0 until (47 - GameData.turnCounter)) {
       var terrIndex = getRandomIndex
       GameData.terrArray(terrIndex).incrementArmy(1)
       GameData.terrArray(terrIndex).setOwner(GameData.players(GameData.currPlayerIndex).name)
