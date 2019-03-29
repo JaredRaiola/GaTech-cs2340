@@ -82,7 +82,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else if (data.terr.toLowerCase() == "all random") {
         fillAll
-        terrIndex = 1
+        terrIndex = -2
         GameData.turnCounter = GameData.turnCounter - 1
       } else if (data.terr.toLowerCase() == "random") {
         terrIndex = getRandomIndex
@@ -91,20 +91,18 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       }
       if (terrIndex != -1) {
         //success
-        GameData.terrArray(terrIndex).incrementArmy(1)
-        GameData.terrArray(terrIndex).setOwner(GameData.players(GameData.currPlayerIndex).name)
-        GameData.players(GameData.currPlayerIndex).decrementArmyCount(1)
-        newTurn
-
+        if (terrIndex != -2) {
+          GameData.terrArray(terrIndex).incrementArmy(1)
+          GameData.terrArray(terrIndex).setOwner(GameData.players(GameData.currPlayerIndex).name)
+          GameData.players(GameData.currPlayerIndex).decrementArmyCount(1)
+          newTurn
+        }
         //now check turncounter
-        if (GameData.turnCounter != GameData.terrArray.length) {
+        if (GameData.turnCounter != GameData.terrArray.length && terrIndex != -2) {
           Ok(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
-
           val result = "Territory " + terrIndex + " now has " + GameData.terrArray(terrIndex).armyCount + " armies."
           Redirect(routes.TerritoryController.listTerritories()).flashing("Tubular! " -> result)
         } else {
-          //GameData.currPlayerIndex = 0
-          assignNewArmies
           Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
         }
       } else {
