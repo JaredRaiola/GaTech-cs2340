@@ -103,6 +103,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
           val result = "Territory " + terrIndex + " now has " + GameData.terrArray(terrIndex).armyCount + " armies."
           Redirect(routes.TerritoryController.listTerritories()).flashing("Tubular! " -> result)
         } else {
+          assignNewArmies
           Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
         }
       } else {
