@@ -23,10 +23,18 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   import TerriForm._
   import AdditionalArmiesForm._
 
-  private def isAllDigits(x: String) = x forall Character.isDigit
   private def startStateCorrect = GameData.terrArray.isEmpty || GameData.players.size < 3
+  private def isAllDigits(x: String) = x forall Character.isDigit
   private def isValidNum(str: String) = str != "" && isAllDigits(str)
   private def isInRange(str: String) = str.toInt <= 47 && str.toInt >= 0
+  private def checkTerritory(terrIndex: Int): Boolean = GameData.terrArray(terrIndex).ownerName != ""
+  private def getRandomTerr = {
+    var randomter = scala.util.Random.nextInt(GameData.numTerritories - 1)
+    while (checkTerritory(randomter)) {
+      randomter = scala.util.Random.nextInt(GameData.numTerritories - 1)
+    }
+    randomter
+  }
 
   def newTurn:Unit = {
     if (GameData.currPlayerIndex == GameData.players.length - 1) {
@@ -35,10 +43,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       GameData.currPlayerIndex += 1
     }
     GameData.turnCounter += 1
-  }
-
-  def checkTerritory(terrIndex: Int): Boolean = {
-    GameData.terrArray(terrIndex).ownerName != ""
   }
 
   def index:Action[AnyContent] = Action {
@@ -57,18 +61,13 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       BadRequest(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
     }
 
-
     val successFunction = { data: TerritoryData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
       if (startStateCorrect) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       } else if (data.terr.toLowerCase() == "random") {
-        var randomter = scala.util.Random.nextInt(GameData.numTerritories - 1)
-        while (checkTerritory(randomter)) {
-          randomter = scala.util.Random.nextInt(GameData.numTerritories - 1)
-        }
-        terrIndex = randomter
+        terrIndex = getRandomTerr
       } else if (isValidNum(data.terr) && isInRange(data.terr) && GameData.terrArray(data.terr.toInt).ownerName == "") {
         terrIndex = data.terr.toInt
       }
