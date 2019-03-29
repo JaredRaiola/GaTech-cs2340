@@ -22,6 +22,31 @@ object GameData {
   }
 
   def calculateNewArmies(index: Int) = {
-    10
+    var newArmies = 0
+    var territoriesOwned = 0
+    var continentsCount = Array(0, 0, 0)
+    for (i <- terrArray.indices) {
+      if (terrArray(i).getOwner == players(index).name) {
+        territoriesOwned += 1
+        continentsCount(terrArray(i).cont) += 1
+      }
+    }
+
+    //if player owns continent 0
+    if (continentsCount(0) == 16) {
+      newArmies += 3
+    }
+    if (continentsCount(1) == 16) {
+      newArmies += 7
+    }
+    if (continentsCount(2) == 16) {
+      newArmies += 5
+    }
+
+    if (players(index).territoryCount < 9) {
+      newArmies += 3
+    } else {
+      newArmies += players(index).territoryCount / 3
+    }
   }
 }
