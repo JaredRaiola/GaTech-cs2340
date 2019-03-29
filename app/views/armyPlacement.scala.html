@@ -23,11 +23,19 @@
                     </tbody>
                 </table>
                 <br>
+                <div class="new-armies">
+                    @{
+                        var currPlayerName = GameData.getCurrentPlayer
+                        var newArmies = GameData.calculateNewArmies(GameData.currPlayerIndex)
+                        <p>{currPlayerName.name}! You have {newArmies} new armies added to your sleevies.</p>
+                        <p>Make sure to assign at least {newArmies} armies to a territory in order to finish your turn!</p>
+                    }
+                </div>
+                <br>
                 @* Flash shows updates to a page *@
                 @request.flash.data.map{ case (name, value) =>
                 <div class="message">@name @value</div>
                 }
-
                 <h3>Map</h3>
                 <div class="name-input">
                 @helper.form(controllers.routes.TerritoryController.placeAdditionalArmies) {

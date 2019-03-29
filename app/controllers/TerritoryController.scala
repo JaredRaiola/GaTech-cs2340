@@ -44,14 +44,21 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       newTurn
     }
   }
+  private def assignNewArmies(index: Int) = {
+    var newArmies = GameData.calculateNewArmies(index)
+    GameData.players(index).incrementArmyCount(newArmies)
+  }
 
   def newTurn:Unit = {
+    GameData.turnCounter += 1
     if (GameData.currPlayerIndex == GameData.players.length - 1) {
       GameData.currPlayerIndex = 0
     } else {
       GameData.currPlayerIndex += 1
     }
-    GameData.turnCounter += 1
+    if (GameData.turnCounter >= GameData.terrArray.length) {
+      assignNewArmies(GameData.currPlayerIndex)
+    }
   }
 
   def index:Action[AnyContent] = Action {
@@ -129,14 +136,20 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         terrIndex = data.terr.toInt
       }
       if (data.numArmies <= 0 || data.numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount) {
-          Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "That's an invalid number of armies >:(")
-      } else if (terrIndex != -1) {
-        //success
-          GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
-          GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
-          newTurn
+          Redirect(routes.TerritoryController.updatePlacements).flashing("You and what army? " -> "That's more armies than you have.")
+      } else {
+        if (data.numArmies < GameData.calculateNewArmies(GameData.currPlayerIndex)) {
+          Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "You need to place all of your new armies.")
+        } else {
+          if (terrIndex != -1) {
+            //success
+            GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
+            GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
+            newTurn
+          }
+          Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
+        }
       }
-      Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
     }
     val formValidationResult = additionalArmiesForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
