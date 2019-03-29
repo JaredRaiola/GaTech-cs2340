@@ -20,5 +20,5 @@ GET     /assets/*file                 controllers.Assets.versioned(path="/public
 GET      /armyview                     controllers.TerritoryController.listTerritories
 POST     /armyview                     controllers.TerritoryController.claimTerritories
 
-GET      /armyPlacement                controllers.PlayerFormController.updatePlacements
-POST     /armyPlacement                controllers.PlayerFormController.placeAdditionalArmies
+GET      /armyPlacement                controllers.TerritoryController.updatePlacements
+POST     /armyPlacement                controllers.TerritoryController.placeAdditionalArmies

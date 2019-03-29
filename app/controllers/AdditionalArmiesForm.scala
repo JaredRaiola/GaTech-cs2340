@@ -10,7 +10,7 @@ object AdditionalArmiesForm {
    * Using a class specifically for form binding reduces the chances
    * of a parameter tampering attack and makes code clearer.
    */
-  case class AdditionalArmiesData(terr: String, numArmies: String)
+  case class AdditionalArmiesData(terr: String, numArmies: Int)
 
   /**
    * The form definition for the "create a widget" form.
@@ -20,7 +20,7 @@ object AdditionalArmiesForm {
   val additionalArmiesForm = Form(
     mapping(
       "terr" -> nonEmptyText,
-      "numArmies" -> nonEmptyText
+      "numArmies" -> number
     )(AdditionalArmiesData.apply)(AdditionalArmiesData.unapply)
   )
 }

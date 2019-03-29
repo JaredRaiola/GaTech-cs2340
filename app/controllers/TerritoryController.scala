@@ -30,7 +30,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       GameData.currPlayerIndex += 1
     }
     GameData.turnCounter += 1
-
   }
 
   def checkTerritory(terrIndex: Int): Boolean = {
@@ -83,7 +82,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
           val result = "Territory " + terrIndex + " now has " + GameData.terrArray(terrIndex).armyCount + " armies."
           Redirect(routes.TerritoryController.listTerritories()).flashing("Tubular! " -> result)
         } else {
-          Ok(views.html.armyPlacement(GameData.players, GameData.terrArray, additionalArmiesForm))
+          Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
         }
       } else {
         //failure
@@ -95,4 +94,40 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     formValidationResult.fold(errorFunction, successFunction)
   }
 
+
+
+  def updatePlacements = Action { implicit request: MessagesRequest[AnyContent] =>
+    // Pass an unpopulated form to the template
+    Ok(views.html.armyPlacement(GameData.players, GameData.terrArray, additionalArmiesForm ))
+  }
+
+  def placeAdditionalArmies = Action { implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[AdditionalArmiesData] =>
+      // This is the bad case, where the form had validation errors.
+      // Let's show the user the form again, with the errors highlighted.
+      // Note how we pass the form with errors to the template.
+      BadRequest(views.html.armyPlacement(GameData.players, GameData.terrArray, additionalArmiesForm))
+    }
+
+    val successFunction = { data: AdditionalArmiesData =>
+      // This is the good case, where the form was successfully parsed as a Data object.
+      var terrIndex = -1;
+      if (GameData.terrArray.isEmpty || GameData.players.size < 3) {
+        Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
+      } else if (data.terr != "" && (isAllDigits(data.terr)) && (data.terr.toInt <= 47 && data.terr.toInt >= 0) && GameData.terrArray(data.terr.toInt).ownerName == "") {
+          terrIndex = data.terr.toInt
+      }
+      if (data.numArmies <= 0 || data.numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount) {
+          //Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "That's an invalid number of armies >:(")
+      } else if (terrIndex != -1) {
+        //success
+          GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
+          GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
+          newTurn
+      }
+      Ok(views.html.armyPlacement(GameData.players, GameData.terrArray, additionalArmiesForm))
+    }
+    val formValidationResult = additionalArmiesForm.bindFromRequest
+    formValidationResult.fold(errorFunction, successFunction)
+  }
 }

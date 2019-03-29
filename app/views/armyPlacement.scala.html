@@ -1,4 +1,4 @@
-@(players: Seq[Player], terrArray: Array[Territory], additionalArmiesForm: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
+@(players: Seq[Player], currPlayerIndex: Int, terrArray: Array[Territory], additionalArmiesForm: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
     @main("armyPlacement") {
 
         <html lang="en">
@@ -14,7 +14,11 @@
                     </thead>
                     <tbody>
                     @for(w <- players) {
-                        <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                        @if(players(currPlayerIndex).equals(w)) {
+                            <tr bgcolor="#228b22"><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                        }@if(!players(currPlayerIndex).equals(w)){
+                            <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                        }
                     }
                     </tbody>
                 </table>
@@ -26,7 +30,7 @@
 
                 <h3>Map</h3>
                 <div class="name-input">
-                @helper.form(controllers.routes.PlayerFormController.placeAdditionalArmies) {
+                @helper.form(controllers.routes.TerritoryController.placeAdditionalArmies) {
                     <h5> Place your additional armies into one of your own territories</h5>
                     @helper.CSRF.formField
                     <h5>Enter the territory you want to reinforce</h5>
