@@ -21,7 +21,59 @@ object GameData {
     players(currPlayerIndex)
   }
 
+  def calculateTerritoriesOwned(index: Int) = {
+    var territoriesOwned = 0
+    for (i <- terrArray.indices) {
+      if (terrArray(i).getOwner == players(index).name) {
+        territoriesOwned += 1
+      }
+    }
+    territoriesOwned
+  }
+
+  def calculateContinentsArray(index: Int):Array[Int] = {
+    var continentsCount = Array(0, 0, 0)
+    for (i <- terrArray.indices) {
+      if (terrArray(i).getOwner == players(index).name) {
+        continentsCount(terrArray(i).cont) += 1
+      }
+    }
+    continentsCount
+  }
+
+  def calculateContinentsOwned(index: Int):Int = {
+    var continentsCount = calculateContinentsArray(index)
+    var numContinentsOwned = 0
+    for (i <- continentsCount.indices) {
+      if (continentsCount(i) == 16) {
+        numContinentsOwned += 1
+      }
+    }
+    numContinentsOwned
+  }
+
   def calculateNewArmies(index: Int) = {
-    10
+    var newArmies = 0
+    var territoriesOwned = calculateTerritoriesOwned(index)
+    var continentsCount = calculateContinentsArray(index)
+
+    //if player owns continent 0
+    if (continentsCount(0) == 16) {
+      newArmies += 3
+    }
+    if (continentsCount(1) == 16) {
+      newArmies += 7
+    }
+    if (continentsCount(2) == 16) {
+      newArmies += 5
+    }
+
+    if (territoriesOwned < 9) {
+      newArmies += 3
+    } else {
+      newArmies += territoriesOwned / 3
+    }
+
+    newArmies
   }
 }

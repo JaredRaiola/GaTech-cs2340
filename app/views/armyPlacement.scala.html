@@ -26,8 +26,11 @@
                 <div class="new-armies">
                     @{
                         var currPlayerName = GameData.getCurrentPlayer
+                        var curr = GameData.currPlayerIndex
                         var newArmies = GameData.calculateNewArmies(GameData.currPlayerIndex)
-                        <p>{currPlayerName.name}! You have {newArmies} new armies added to your sleevies.</p>
+                        <p>{currPlayerName.name}! You own {GameData.calculateTerritoriesOwned(curr)} territories
+                        and {GameData.calculateContinentsOwned(curr)} continent(s).</p>
+                        <p>As a result, you have {newArmies} new armies added to your sleevies.</p>
                         <p>Make sure to assign at least {newArmies} armies to a territory you own in order to finish your turn!</p>
                     }
                 </div>
@@ -58,11 +61,15 @@
                                     @for(j <- 0 until 8) {
                                         @{
                                             var num = i * 8 + j
-                                            <td class="map-unit">
+                                            var owned = "not-owned"
+                                            if (terrArray(num).ownerName == GameData.getCurrentPlayer.name) {
+                                                owned = "indeed-owned"
+                                            }
+                                            <td class={"cont" + terrArray(num).cont + " map-unit " + owned}>
                                             <h3>Territory</h3>
                                             <h3>{num}</h3>
-                                            <p>Owner: {terrArray(num).getOwner}</p>
-                                            <p>Armies: {terrArray(num).armyCount}</p>
+                                            <p><b>Owner:</b> {terrArray(num).getOwner}</p>
+                                            <p><b>Armies:</b> {terrArray(num).armyCount}</p>
 
 
 
