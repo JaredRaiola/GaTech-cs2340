@@ -73,11 +73,13 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val successFunction = { data: TerritoryData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
-      if (data.terr.toLowerCase() == "fillall") {
-        fillAll
-      }
+      var done = 0
       if (startStateIncomplete) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
+      } else if (data.terr.toLowerCase() == "all random") {
+        fillAll
+        terrIndex = 1
+        GameData.turnCounter = GameData.turnCounter - 1
       } else if (data.terr.toLowerCase() == "random") {
         terrIndex = getRandomIndex
       } else if (isInRange(data.terr) && !territoryIsOccupied(data.terr.toInt)) {
@@ -99,7 +101,8 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         }
       } else {
         //failure
-        Redirect(routes.TerritoryController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there.")
+        Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
+        Redirect(routes.TerritoryController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there!")
       }
     }
 
