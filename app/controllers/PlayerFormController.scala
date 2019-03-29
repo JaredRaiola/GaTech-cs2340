@@ -33,20 +33,20 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
   private val postUrl = routes.PlayerFormController.createPlayer()
   GameData.players.remove(0)
 
-  def index = Action {
+  def index:Action[AnyContent] = Action {
     Ok(views.html.index())
   }
 
 
-  def isAllDigits(x: String) = x forall Character.isDigit
+  def isAllDigits(x: String):Boolean = x forall Character.isDigit
 
-  def listPlayers = Action { implicit request: MessagesRequest[AnyContent] =>
+  def listPlayers:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
     Ok(views.html.listPlayers(GameData.players, form, postUrl))
   }
 
   // This will be the action that handles our form post
-  def createPlayer = Action { implicit request: MessagesRequest[AnyContent] =>
+  def createPlayer:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[Data] =>
       // This is the bad case, where the form had validation errors.
       // Let's show the user the form again, with the errors highlighted.
@@ -57,7 +57,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
     val successFunction = { data: Data =>
       // This is the good case, where the form was successfully parsed as a Data object.
       val player = new Player(data.name, 0, 0)
-      if (!GameData.players.isEmpty) {
+      if (GameData.players.nonEmpty) {
         if (GameData.players.contains(player)) {
           Redirect(routes.PlayerFormController.listPlayers()).flashing("Warning" -> "Please enter a unique name!")
         } else if (GameData.players.length < 6) {

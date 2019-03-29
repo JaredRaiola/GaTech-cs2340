@@ -22,18 +22,17 @@ class ArmySetUpController @Inject()(cc: MessagesControllerComponents) extends Me
 
 
 
-  def createArmySetUpController(players: ArrayBuffer[Player], terrArray: Array[Territory]) = {
+  def createArmySetUpController(players: ArrayBuffer[Player], terrArray: Array[Territory]): Unit = {
   }
 
-  val players: ArrayBuffer[Player] = null
-  val terrCont: TerritoryController = null
+  val players: ArrayBuffer[Player] = GameData.players
 
 
 
   //index into the ArrayBuffer which player is active
   private var currPlayerIndex: Int = 0
 
-  def newTurn = {
+  def newTurn: Unit = {
     if (currPlayerIndex == players.length) {
       currPlayerIndex = 0
     } else {
