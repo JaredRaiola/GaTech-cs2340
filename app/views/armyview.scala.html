@@ -32,7 +32,7 @@
                 <h3>Map</h3>
                 <div class="name-input">
                 @helper.form(controllers.routes.TerritoryController.claimTerritories) {
-                    <h5> Enter the Territory You Want or type "Random" for a random territory</h5>
+                    <h5> Enter the Territory You Want, type "Random" for a random territory or type "All Random" for every territory to be claimed randomly!</h5>
                     @helper.CSRF.formField
 
                     @helper.inputText(form("terr"))
