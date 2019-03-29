@@ -48,5 +48,7 @@ object GameData {
     } else {
       newArmies += players(index).territoryCount / 3
     }
+
+    newArmies
   }
 }
