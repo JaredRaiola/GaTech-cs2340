@@ -44,7 +44,8 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       newTurn
     }
   }
-  private def assignNewArmies(index: Int) = {
+  private def assignNewArmies = {
+    var index = GameData.currPlayerIndex
     var newArmies = GameData.calculateNewArmies(index)
     GameData.players(index).incrementArmyCount(newArmies)
   }
@@ -55,9 +56,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       GameData.currPlayerIndex = 0
     } else {
       GameData.currPlayerIndex += 1
-    }
-    if (GameData.turnCounter >= GameData.terrArray.length) {
-      assignNewArmies(GameData.currPlayerIndex)
     }
   }
 
@@ -97,12 +95,16 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         GameData.terrArray(terrIndex).setOwner(GameData.players(GameData.currPlayerIndex).name)
         GameData.players(GameData.currPlayerIndex).decrementArmyCount(1)
         newTurn
+
         //now check turncounter
         if (GameData.turnCounter != GameData.terrArray.length) {
           Ok(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
+
           val result = "Territory " + terrIndex + " now has " + GameData.terrArray(terrIndex).armyCount + " armies."
           Redirect(routes.TerritoryController.listTerritories()).flashing("Tubular! " -> result)
         } else {
+          //GameData.currPlayerIndex = 0
+          assignNewArmies
           Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
         }
       } else {
@@ -133,9 +135,14 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       var terrIndex = -1
       if (startStateIncomplete) {
         Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
-      } else if (isInRange(data.terr) &&
-        GameData.terrArray(data.terr.toInt).ownerName == GameData.players(GameData.currPlayerIndex).name) {
-        terrIndex = data.terr.toInt
+      } else if (isInRange(data.terr)) {
+        if (GameData.terrArray(data.terr.toInt).ownerName == GameData.players(GameData.currPlayerIndex).name) {
+          terrIndex = data.terr.toInt
+        } else {
+          Redirect(routes.TerritoryController.listTerritories()).flashing("You can't do that! " -> "You don't own that territory.")
+        }
+      } else {
+        Redirect(routes.TerritoryController.listTerritories()).flashing("Warning: " -> "This is not a valid territory value.")
       }
       if (data.numArmies <= 0 || data.numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount) {
           Redirect(routes.TerritoryController.updatePlacements).flashing("You and what army? " -> "That's more armies than you have.")
@@ -148,6 +155,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
             GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
             GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
             newTurn
+            assignNewArmies
           }
           Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
         }
