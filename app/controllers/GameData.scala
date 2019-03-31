@@ -25,6 +25,16 @@ object GameData {
     players(currPlayerIndex)
   }
 
+  def newTurn:Unit = {
+    turnCounter += 1
+    if (currPlayerIndex == players.length - 1) {
+      currPlayerIndex = 0
+    } else {
+      currPlayerIndex += 1
+    }
+  }
+
+
   def checkTerritoryAdjacency(terr1: Territory, terr2: Territory): Boolean = {
     //need to make the territory map graph
     true

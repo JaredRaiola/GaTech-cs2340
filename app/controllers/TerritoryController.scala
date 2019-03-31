@@ -53,13 +53,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   def newTurn:Unit = {
-    GameData.turnCounter += 1
-    if (GameData.currPlayerIndex == GameData.players.length - 1) {
-      GameData.currPlayerIndex = 0
-    } else {
-      GameData.currPlayerIndex += 1
-    }
-
+    GameData.newTurn
     armiesOnTurn = 0
   }
 
