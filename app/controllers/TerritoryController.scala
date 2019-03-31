@@ -22,6 +22,8 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   import TerriForm._
   import AdditionalArmiesForm._
 
+  private var armiesOnTurn = 0
+
   private def startStateIncomplete = GameData.terrArray.isEmpty || GameData.players.size < 3
   private def isAllDigits(x: String) = x forall Character.isDigit
   private def isValidNum(str: String) = str != "" && isAllDigits(str)
@@ -57,6 +59,8 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     } else {
       GameData.currPlayerIndex += 1
     }
+
+    armiesOnTurn = 0
   }
 
   def index:Action[AnyContent] = Action {
@@ -132,34 +136,48 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
       if (startStateIncomplete) {
-        Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
+        Redirect(routes.TerritoryController.updatePlacements).flashing("Huh" -> "Something went wrong.")
       } else if (isInRange(data.terr)) {
         if (GameData.terrArray(data.terr.toInt).ownerName == GameData.players(GameData.currPlayerIndex).name) {
           terrIndex = data.terr.toInt
         } else {
-          Redirect(routes.TerritoryController.listTerritories()).flashing("You can't do that! " -> "You don't own that territory.")
+          Redirect(routes.TerritoryController.updatePlacements).flashing("You can't do that! " -> "You don't own that territory.")
         }
       } else {
-        Redirect(routes.TerritoryController.listTerritories()).flashing("Warning: " -> "This is not a valid territory value.")
+        Redirect(routes.TerritoryController.updatePlacements).flashing("Warning: " -> "This is not a valid territory value.")
       }
       if (data.numArmies <= 0 || data.numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount) {
           Redirect(routes.TerritoryController.updatePlacements).flashing("You and what army? " -> "That's more armies than you have.")
       } else {
-        if (data.numArmies < GameData.calculateNewArmies(GameData.currPlayerIndex)) {
-          Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "You need to place all of your new armies.")
-        } else {
           if (terrIndex != -1) {
             //success
             GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
             GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
-            newTurn
-            assignNewArmies
+            armiesOnTurn = armiesOnTurn + data.numArmies
+            if (GameData.players(GameData.currPlayerIndex).armyBinCount == 0) {
+              newTurn
+              assignNewArmies
+            }
           }
           Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
-        }
       }
     }
     val formValidationResult = additionalArmiesForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
   }
+
+  def endTurn: Unit = {
+
+    if (armiesOnTurn < GameData.calculateNewArmies(GameData.currPlayerIndex)) {
+      Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "You need to place all of your new armies.")
+    }
+
+
+
+    newTurn
+    assignNewArmies
+
+
+  }
+
 }
