@@ -17,8 +17,21 @@ object GameData {
     terrArray(i) = new Territory("TerritoryName" + i, "", 0, continent)
   }
 
+  var attackDiceRoll: Array[Int] = null
+  var defenceDiceRoll: Array[Int] = null
+
+
   def getCurrentPlayer = {
     players(currPlayerIndex)
+  }
+
+  def checkTerritoryAdjacency(terr1: Territory, terr2: Territory): Boolean = {
+    //need to make the territory map graph
+    true
+  }
+
+  def doesCurrPlayerOwnTerr(terr: Territory): Boolean = {
+    terr.getOwner == GameData.players(GameData.currPlayerIndex).name
   }
 
   def calculateTerritoriesOwned(index: Int) = {

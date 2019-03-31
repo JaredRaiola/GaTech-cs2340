@@ -41,17 +41,6 @@ class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0,
     !terr.ownerName.equals(this.name)
   }
 
-  def attack(myTerr: Territory, otherTerr: Territory): List[Int] = {
-    if (!turnMode.equals(2)) Nil
-    Nil
-    //stub
-  }
-
-  def attackLosses(mydice: Int, defenceDice: Int): List[Int] = {
-    Nil
-    //stub
-  }
-
   def continentBonus(): Int = {
 
     var total = 0
