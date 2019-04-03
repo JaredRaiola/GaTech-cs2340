@@ -1,10 +1,10 @@
-@(additionalArmiesForm: Form[AdditionalArmiesForm.AdditionalArmiesData])(implicit request: MessagesRequestHeader)
-    @main("armyPlacement") {
+@(form: Form[AttackForm.AttackData])(implicit request: MessagesRequestHeader)
+    @main("armyview") {
 
         <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                <title>Place Your Armies</title>
+                <title>Review Your Armies</title>
             </head>
             <body>
                 <h3>Players</h3>
@@ -19,37 +19,25 @@
                         }@if(!GameData.players(GameData.currPlayerIndex).equals(w)){
                             <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
                         }
+
                     }
                     </tbody>
                 </table>
-                <br>
-                <div class="new-armies">
-                    @{
-                        var currPlayerName = GameData.getCurrentPlayer
-                        var curr = GameData.currPlayerIndex
-                        var newArmies = GameData.calculateNewArmies(GameData.currPlayerIndex)
-                        <p>{currPlayerName.name}! You own {GameData.calculateTerritoriesOwned(curr)} territories
-                        and {GameData.calculateContinentsOwned(curr)} continent(s).</p>
-                        <p>As a result, you have {newArmies} new armies added to your sleevies.</p>
-                        <p>Make sure to assign all of your armies to complete your turn!</p>
-                    }
-                </div>
                 <br>
                 @* Flash shows updates to a page *@
                 @request.flash.data.map{ case (name, value) =>
                 <div class="message">@name @value</div>
                 }
+
                 <h3>Map</h3>
                 <div class="name-input">
-                @helper.form(controllers.routes.TerritoryController.placeAdditionalArmies) {
-                    <h5> Place your additional armies into one of your own territories</h5>
+                @helper.form(controllers.routes.TerritoryController.claimTerritories) {
+                    <h5> Enter the Territory You Want, type "Random" for a random territory or type "All Random" for every territory to be claimed randomly!</h5>
                     @helper.CSRF.formField
-                    <h5>Enter the territory you want to reinforce</h5>
-                    @helper.inputText(additionalArmiesForm("terr"))
-                    <h5>Enter how many armies you want it to have</h5>
-                    @helper.inputText(additionalArmiesForm("numArmies"))
 
-                    <button class="pressButton">REINFORCE</button>
+                    @helper.inputText(form("terr"))
+
+                    <button class="pressButton">CLAIM</button>
 
 
                 }</div>
@@ -61,18 +49,11 @@
                                     @for(j <- 0 until 8) {
                                         @{
                                             var num = i * 8 + j
-                                            var owned = "not-owned"
-                                            if (GameData.terrArray(num).ownerName == GameData.getCurrentPlayer.name) {
-                                                owned = "indeed-owned"
-                                            }
-                                            <td class={"cont" + GameData.terrArray(num).cont + " map-unit " + owned}>
+                                            <td class={"cont" + GameData.terrArray(num).cont + " map-unit"}>
                                             <h3>Territory</h3>
                                             <h3>{num}</h3>
                                             <p><b>Owner:</b> {GameData.terrArray(num).getOwner}</p>
                                             <p><b>Armies:</b> {GameData.terrArray(num).armyCount}</p>
-
-
-
                                             </td>
                                         }
                                     }
