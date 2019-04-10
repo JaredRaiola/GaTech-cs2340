@@ -33,7 +33,8 @@
                 <h3>Map</h3>
                 <div class="name-input">
                 @helper.form(controllers.routes.AttackController.attack) {
-                    <h5> Enter the Territory You Want, type "Random" for a random territory or type "All Random" for every territory to be claimed randomly!</h5>
+                    <h5> Enter The territory you want attacked, the Territory you are attacking with,
+                    the number of armies, and the number of armies defending the territory </h5>
                     @helper.CSRF.formField
                     <p>Your Territory</p>
                     @helper.inputText(form("terr"))
@@ -56,12 +57,16 @@
                                     @for(j <- 0 until 8) {
                                         @{
                                             var num = i * 8 + j
-                                            <td class={"cont" + GameData.terrArray(num).cont + " map-unit"}>
-                                            <h3>Territory</h3>
-                                            <h3>{num}</h3>
-                                            <p><b>Owner:</b> {GameData.terrArray(num).getOwner}</p>
-                                            <p><b>Armies:</b> {GameData.terrArray(num).armyCount}</p>
-                                            </td>
+                                            var owned = "not-owned"
+                                            if (GameData.terrArray(num).ownerName == GameData.getCurrentPlayer.name) {
+                                                owned = "indeed-owned"
+                                            }
+                                                <td class={"cont" + GameData.terrArray(num).cont + " map-unit " + owned}>
+                                                <h3>Territory</h3>
+                                                <h3>{num}</h3>
+                                                <p><b>Owner:</b> {GameData.terrArray(num).getOwner}</p>
+                                                <p><b>Armies:</b> {GameData.terrArray(num).armyCount}</p>
+                                                </td>
                                         }
                                     }
 
