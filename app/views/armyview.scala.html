@@ -1,4 +1,4 @@
-@(players: Seq[Player], currPlayerIndex: Int, terrArray: Array[Territory], form: Form[TerriForm.TerritoryData])(implicit request: MessagesRequestHeader)
+@(form: Form[TerriForm.TerritoryData])(implicit request: MessagesRequestHeader)
     @main("armyview") {
 
         <html lang="en">
@@ -13,10 +13,10 @@
                         <tr><th>Player Name</th> <th>Army Count </th>
                     </thead>
                     <tbody>
-                    @for(w <- players) {
-                        @if(players(currPlayerIndex).equals(w)) {
+                    @for(w <- GameData.players) {
+                        @if(GameData.players(GameData.currPlayerIndex).equals(w)) {
                             <tr bgcolor="#228b22"><td>@w.name</td> <td>@w.armyBinCount</td></tr>
-                        }@if(!players(currPlayerIndex).equals(w)){
+                        }@if(!GameData.players(GameData.currPlayerIndex).equals(w)){
                             <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
                         }
 
@@ -49,11 +49,11 @@
                                     @for(j <- 0 until 8) {
                                         @{
                                             var num = i * 8 + j
-                                            <td class={"cont" + terrArray(num).cont + " map-unit"}>
+                                            <td class={"cont" + GameData.terrArray(num).cont + " map-unit"}>
                                             <h3>Territory</h3>
                                             <h3>{num}</h3>
-                                            <p>Owner: {terrArray(num).getOwner}</p>
-                                            <p>Armies: {terrArray(num).armyCount}</p>
+                                            <p><b>Owner:</b> {GameData.terrArray(num).getOwner}</p>
+                                            <p><b>Armies:</b> {GameData.terrArray(num).armyCount}</p>
                                             </td>
                                         }
                                     }
@@ -65,5 +65,6 @@
                 </table>
             </body>
         </html>
+
 
 }
