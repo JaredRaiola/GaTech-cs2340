@@ -112,14 +112,22 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
         GameData.attackDiceRoll = getDiceRollArray(attackDiceCount)
         GameData.defenceDiceRoll = getDiceRollArray(defenceDiceCount)
         val attackLosses = getAttackLosses(attackDiceCount, defenceDiceCount)
+        myTerr.decrementArmy(attackLosses._1)
+        otherTerr.decrementArmy(attackLosses._2)
+        if (otherTerr.armyCount == 0) {
+          otherTerr.setOwner(GameData.getCurrentPlayer.name)
+          Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name
+            + " just claimed Territory " + otherTerrIndex))
+        } else {
+          Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name
+            + "lost " + attackLosses._1 + " armies without claiming Territory " + otherTerrIndex))
+        }
+
 
       }
 
-      // Stubbed case
       newTurn
       assignNewArmies
-      Redirect(routes.TerritoryController.updatePlacements()).flashing("Whoa! " -> "We haven't coded this functionality yet!")
-
     }
 
     val formValidationResult = attackForm.bindFromRequest
