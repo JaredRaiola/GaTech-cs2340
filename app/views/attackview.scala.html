@@ -7,6 +7,7 @@
                 <title>Review Your Armies</title>
             </head>
             <body>
+                <h1>ATTACK!!!</h1>
                 <h3>Players</h3>
                 <table class="army-list">
                     <thead>
@@ -31,13 +32,19 @@
 
                 <h3>Map</h3>
                 <div class="name-input">
-                @helper.form(controllers.routes.TerritoryController.claimTerritories) {
+                @helper.form(controllers.routes.AttackController.attack) {
                     <h5> Enter the Territory You Want, type "Random" for a random territory or type "All Random" for every territory to be claimed randomly!</h5>
                     @helper.CSRF.formField
-
+                    <p>Your Territory</p>
                     @helper.inputText(form("terr"))
+                    <p>Other Player's Territory</p>
+                    @helper.inputText(form("otherTerr"))
+                    <p>Attack Dice</p>
+                    @helper.inputText(form("attackDiceCount"))
+                    <p>Defense Dice</p>
+                    @helper.inputText(form("defenseDiceCount"))
 
-                    <button class="pressButton">CLAIM</button>
+                    <button class="pressButton">YEH</button>
 
 
                 }</div>

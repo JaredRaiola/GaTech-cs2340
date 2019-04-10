@@ -11,6 +11,7 @@ import play.api.mvc._
 class AttackController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
 
   import AttackForm._
+  import AdditionalArmiesForm._
 
   //need to make forms and import them here
   //forms needed: myTerr, otherTerr, attackDiceCount, defenceDiceCount
@@ -79,14 +80,15 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     Ok(views.html.attackview(attackForm))
   }
 
-  def claimTerritories:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
+  def attack:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[AttackData] =>
       BadRequest(views.html.attackview(attackForm))
     }
 
     val successFunction = { data: AttackData =>
       // Stubbed case
-      Redirect(routes.TerritoryController.listTerritories()).flashing("Whoa! " -> "We haven't coded this functionality yet!")
+      GameData.newTurn
+      Redirect(routes.TerritoryController.updatePlacements()).flashing("Whoa! " -> "We haven't coded this functionality yet!")
 
     }
 

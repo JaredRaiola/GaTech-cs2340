@@ -21,6 +21,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
 
   import TerriForm._
   import AdditionalArmiesForm._
+  import AttackForm._
 
   private var armiesOnTurn = 0
 
@@ -150,8 +151,8 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
             newTurn
             assignNewArmies
           }
-          Ok(views.html.armyPlacement(additionalArmiesForm))
-
+          Ok(views.html.attackview(attackForm))
+          //Ok(views.html.armyPlacement(additionalArmiesForm))
         }
       }
     }
