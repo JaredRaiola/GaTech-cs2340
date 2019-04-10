@@ -126,13 +126,21 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
 
       }
 
-      // Stubbed case
-//      GameData.newTurn
-//      Redirect(routes.TerritoryController.updatePlacements()).flashing("Whoa! " -> "We haven't coded this functionality yet!")
-
+      newTurn
+      assignNewArmies
     }
 
     val formValidationResult = attackForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
+  }
+
+  private def newTurn = {
+    GameData.newTurn
+  }
+
+  private def assignNewArmies = {
+    var index = GameData.currPlayerIndex
+    var newArmies = GameData.calculateNewArmies(index)
+    GameData.players(index).incrementArmyCount(newArmies)
   }
 }
