@@ -76,6 +76,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     Ok(views.html.attackview(attackForm))
   }
 
+
   def attack:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[AttackData] =>
       BadRequest(views.html.attackview(attackForm))
@@ -97,15 +98,15 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
       val defenceDiceCount = data.defenseDiceCount.toInt
 
       if (!GameData.doesCurrPlayerOwnTerr(myTerr)) {
-        // You cant attack from someone elses territory
+        Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "You cant attack from someone elses territory")
       } else if (GameData.doesCurrPlayerOwnTerr(otherTerr)) {
-        // stop hitting yourself
+        Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Stop hitting yourself")
       } else if (!checkAttackDiceCount(attackDiceCount, myTerr)) {
-        // thats an invalid number of dice for the attacking territory
+        Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Thats an invalid number of dice for the attacking territory")
       } else if (!checkDefenceDiceCount(defenceDiceCount, otherTerr)) {
-        // thats an invalid number of dice for the defending territory
+        Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Thats an invalid number of dice for the defending territory")
       } else if (!GameData.checkTerritoryAdjacency(myTerr, otherTerr)) {
-        // those territories dont share a border
+        Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Those territories dont share a border")
       } else { // i hope there arent any other errors
                //do all the attack stuff
         GameData.attackDiceRoll = getDiceRollArray(attackDiceCount)
