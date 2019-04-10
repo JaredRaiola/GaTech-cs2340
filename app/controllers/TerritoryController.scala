@@ -121,8 +121,11 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   def endTurn:Action[AnyContent] = {
-    newTurn
-    assignNewArmies
+    if (GameData.getCurrentPlayer.armyBinCount == 0 && !GameData.isAttackLoop) {
+      GameData.turnCounter += 1
+      newTurn
+      assignNewArmies
+    }
     updatePlacements
   }
 
@@ -156,11 +159,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
           GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
           GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
           armiesOnTurn = armiesOnTurn + data.numArmies
-//          if (GameData.players(GameData.currPlayerIndex).armyBinCount == 0) {
-//            newTurn
-//            assignNewArmies
-//          }
-//          Ok(views.html.attackview(attackForm))
           Ok(views.html.armyPlacement(additionalArmiesForm))
         }
       }
@@ -169,19 +167,5 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val formValidationResult = additionalArmiesForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
   }
-
-//  def endTurn: Unit = {
-//
-//    if (armiesOnTurn < GameData.calculateNewArmies(GameData.currPlayerIndex)) {
-//      Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "You need to place all of your new armies.")
-//    }
-//
-//
-//
-//    newTurn
-//    assignNewArmies
-//
-//
-//  }
 
 }

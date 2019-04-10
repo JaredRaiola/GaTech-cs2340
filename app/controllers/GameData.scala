@@ -21,7 +21,7 @@ object GameData {
   var defenceDiceRoll: Array[Int] = null
 
   def isAttackLoop: Boolean = {
-    turnCounter < players.size
+    turnCounter >= players.size
   }
 
   def getCurrentPlayer = {
