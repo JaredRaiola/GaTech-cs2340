@@ -10,6 +10,9 @@ import play.api.mvc._
 
 class AttackController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
 
+  import AttackForm._
+  import AdditionalArmiesForm._
+
   //need to make forms and import them here
   //forms needed: myTerr, otherTerr, attackDiceCount, defenceDiceCount
   //then make funtion that puts all parts together
@@ -73,5 +76,23 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     diceNumVect.toArray.sortWith(_ > _)
   }
 
+  def updateView:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
+    Ok(views.html.attackview(attackForm))
+  }
 
+  def attack:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[AttackData] =>
+      BadRequest(views.html.attackview(attackForm))
+    }
+
+    val successFunction = { data: AttackData =>
+      // Stubbed case
+      GameData.newTurn
+      Redirect(routes.TerritoryController.updatePlacements()).flashing("Whoa! " -> "We haven't coded this functionality yet!")
+
+    }
+
+    val formValidationResult = attackForm.bindFromRequest
+    formValidationResult.fold(errorFunction, successFunction)
+  }
 }

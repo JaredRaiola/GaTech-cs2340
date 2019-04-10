@@ -21,6 +21,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
 
   import TerriForm._
   import AdditionalArmiesForm._
+  import AttackForm._
 
   private var armiesOnTurn = 0
 
@@ -63,7 +64,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   def listTerritories:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
-    Ok(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
+    Ok(views.html.armyview(terriform))
   }
 
   def claimTerritories:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
@@ -71,7 +72,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       // This is the bad case, where the form had validation errors.
       // Let's show the user the form again, with the errors highlighted.
       // Note how we pass the form with errors to the template.
-      BadRequest(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
+      BadRequest(views.html.armyview(terriform))
     }
 
     val successFunction = { data: TerritoryData =>
@@ -99,12 +100,12 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         }
         //now check turncounter
         if (GameData.turnCounter != GameData.terrArray.length && terrIndex != -1) {
-          Ok(views.html.armyview(GameData.players, GameData.currPlayerIndex, GameData.terrArray, terriform))
+          Ok(views.html.armyview(terriform))
           val result = "Territory " + terrIndex + " now has " + GameData.terrArray(terrIndex).armyCount + " armies."
           Redirect(routes.TerritoryController.listTerritories()).flashing("Tubular! " -> result)
         } else {
           assignNewArmies
-          Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
+          Ok(views.html.armyPlacement(additionalArmiesForm))
         }
       } else {
         //failure
@@ -117,7 +118,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   def updatePlacements:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
-    Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
+    Ok(views.html.armyPlacement(additionalArmiesForm))
   }
 
   def placeAdditionalArmies:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
@@ -125,7 +126,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       // This is the bad case, where the form had validation errors.
       // Let's show the user the form again, with the errors highlighted.
       // Note how we pass the form with errors to the template.
-      BadRequest(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
+      BadRequest(views.html.armyPlacement(additionalArmiesForm))
     }
 
     val successFunction = { data: AdditionalArmiesData =>
@@ -150,8 +151,8 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
             newTurn
             assignNewArmies
           }
-          Ok(views.html.armyPlacement(GameData.players, GameData.currPlayerIndex, GameData.terrArray, additionalArmiesForm))
-
+          Ok(views.html.attackview(attackForm))
+          //Ok(views.html.armyPlacement(additionalArmiesForm))
         }
       }
     }
