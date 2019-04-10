@@ -105,6 +105,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
           Redirect(routes.TerritoryController.listTerritories()).flashing("Tubular! " -> result)
         } else {
           assignNewArmies
+          GameData.turnCounter = 0
           Ok(views.html.armyPlacement(additionalArmiesForm))
         }
       } else {
