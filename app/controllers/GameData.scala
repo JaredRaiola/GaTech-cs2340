@@ -78,6 +78,12 @@ object GameData {
     numContinentsOwned
   }
 
+  def assignNewArmies = {
+    var index = GameData.currPlayerIndex
+    var newArmies = GameData.calculateNewArmies(index)
+    GameData.players(index).incrementArmyCount(newArmies)
+  }
+
   def calculateNewArmies(index: Int) = {
     var newArmies = 0
     var territoriesOwned = calculateTerritoriesOwned(index)
