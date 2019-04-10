@@ -120,14 +120,9 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
             + " just claimed Territory " + otherTerrIndex))
         } else {
           Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name
-            + "lost " + attackLosses._1 + " armies without claiming Territory " + otherTerrIndex))
+              + "lost " + attackLosses._1 + " armies without claiming Territory " + otherTerrIndex))
         }
-
-
       }
-
-      newTurn
-      assignNewArmies
     }
 
     val formValidationResult = attackForm.bindFromRequest
