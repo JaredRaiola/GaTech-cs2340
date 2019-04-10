@@ -79,7 +79,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -2
       if (startStateIncomplete) {
-        Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
+        terrIndex = -3
       } else if (data.terr.toLowerCase() == "all random") {
         fillAll
         terrIndex = -1
@@ -108,9 +108,11 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
           GameData.turnCounter = 0
           Ok(views.html.armyPlacement(additionalArmiesForm))
         }
-      } else {
+      } else if (terrIndex == -2) {
         //failure
         Redirect(routes.TerritoryController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there!")
+      } else {
+        Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       }
     }
 
