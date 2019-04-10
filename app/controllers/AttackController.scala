@@ -22,16 +22,12 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
   }
 
   def checkAttackDiceCount(count: Int, terr: Territory): Boolean = {
-    terr.armyCount >= count + 1 && count < 4
+    terr.armyCount >= count + 1 && count < 4 && count > 0
   }
 
   def checkDefenceDiceCount(count: Int, terr: Territory): Boolean = {
-    terr.armyCount >= count && count < 3
+    terr.armyCount >= count && count < 3 && count > 0
   }
-
-
-
-
 
 
 
@@ -86,6 +82,38 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     }
 
     val successFunction = { data: AttackData =>
+      //error check
+      //set GameData attackDiceRoll and defenceDiceRoll from the getDiceRollArray
+      //call get AttackLosses to get the loss tuple
+      //apply the losses
+      //other stuff happens
+      val myTerrIndex = data.terr.toInt
+      val otherTerrIndex = data.otherTerr.toInt
+
+
+      val myTerr: Territory = GameData.terrArray(myTerrIndex)
+      val otherTerr: Territory = GameData.terrArray(otherTerrIndex)
+      val attackDiceCount = data.attackDiceCount.toInt
+      val defenceDiceCount = data.defenseDiceCount.toInt
+
+      if (!GameData.doesCurrPlayerOwnTerr(myTerr)) {
+        // You cant attack from someone elses territory
+      } else if (GameData.doesCurrPlayerOwnTerr(otherTerr)) {
+        // stop hitting yourself
+      } else if (!checkAttackDiceCount(attackDiceCount, myTerr)) {
+        // thats an invalid number of dice for the attacking territory
+      } else if (!checkDefenceDiceCount(defenceDiceCount, otherTerr)) {
+        // thats an invalid number of dice for the defending territory
+      } else if (!GameData.checkTerritoryAdjacency(myTerr, otherTerr)) {
+        // those territories dont share a border
+      } else { // i hope there arent any other errors
+               //do all the attack stuff
+        GameData.attackDiceRoll = getDiceRollArray(attackDiceCount)
+        GameData.defenceDiceRoll = getDiceRollArray(defenceDiceCount)
+        val attackLosses = getAttackLosses(attackDiceCount, defenceDiceCount)
+
+      }
+
       // Stubbed case
       GameData.newTurn
       Redirect(routes.TerritoryController.updatePlacements()).flashing("Whoa! " -> "We haven't coded this functionality yet!")
