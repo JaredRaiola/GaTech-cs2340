@@ -32,23 +32,30 @@
 
                 <h3>Map</h3>
                 <div class="name-input">
-                @helper.form(controllers.routes.AttackController.attack) {
-                    <h5> Enter The territory you want attacked, the Territory you are attacking with,
-                    the number of armies, and the number of armies defending the territory </h5>
-                    @helper.CSRF.formField
-                    <p>Your Territory</p>
-                    @helper.inputText(form("terr"))
-                    <p>Other Player's Territory</p>
-                    @helper.inputText(form("otherTerr"))
-                    <p>Attack Dice</p>
-                    @helper.inputText(form("attackDiceCount"))
-                    <p>Defense Dice</p>
-                    @helper.inputText(form("defenseDiceCount"))
+                    @helper.form(controllers.routes.AttackController.attack) {
+                        <h5> Enter The territory you want attacked, the Territory you are attacking with,
+                        the number of armies, and the number of armies defending the territory </h5>
+                        @helper.CSRF.formField
+                        <p>Your Territory</p>
+                        @helper.inputText(form("terr"))
+                        <p>Other Player's Territory</p>
+                        @helper.inputText(form("otherTerr"))
+                        <p>Attack Dice</p>
+                        @helper.inputText(form("attackDiceCount"))
+                        <p>Defense Dice</p>
+                        @helper.inputText(form("defenseDiceCount"))
 
-                    <button class="pressButton">YEH</button>
+                        <button class="pressButton">ATTACK</button>
+                    }
+                </div>
 
-
-                }</div>
+                <form id="playGame" action="@{
+                        GameData.newTurn
+                        GameData.assignNewArmies
+                        controllers.routes.TerritoryController.updatePlacements
+                    }">
+                    <input class="pressButton" type="submit" value="END ATTACK PHASE" />
+                </form>
 
                 <table class="map-table">
                     <tbody>

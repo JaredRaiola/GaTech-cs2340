@@ -49,9 +49,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     }
   }
   private def assignNewArmies = {
-    var index = GameData.currPlayerIndex
-    var newArmies = GameData.calculateNewArmies(index)
-    GameData.players(index).incrementArmyCount(newArmies)
+    GameData.assignNewArmies
   }
 
   def newTurn:Unit = {
@@ -132,6 +130,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   def updatePlacements:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     Ok(views.html.armyPlacement(additionalArmiesForm))
   }
+
 
   def placeAdditionalArmies:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[AdditionalArmiesData] =>
