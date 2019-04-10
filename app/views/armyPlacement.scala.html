@@ -30,7 +30,7 @@
                         var newArmies = GameData.calculateNewArmies(GameData.currPlayerIndex)
                         <p>{currPlayerName.name}! You own {GameData.calculateTerritoriesOwned(curr)} territories
                         and {GameData.calculateContinentsOwned(curr)} continent(s).</p>
-                        <p>As a result, you have {newArmies} new armies added to your sleevies.</p>
+                        <p>As a result, {newArmies} new armies added to your sleevies.</p>
                         <p>Make sure to assign all of your armies to complete your turn!</p>
                     }
                 </div>
@@ -53,6 +53,18 @@
 
 
                 }</div>
+
+                @if(GameData.getCurrentPlayer.armyBinCount == 0 && GameData.isAttackLoop) {
+                    <form id="playGame" action="@routes.AttackController.updateView">
+                        <input class="pressButton" type="submit" value="Attack" />
+                    </form>
+                }
+
+                @if(GameData.getCurrentPlayer.armyBinCount == 0 && !GameData.isAttackLoop) {
+                    <form id="playGame" action="@routes.TerritoryController.endTurn">
+                        <input class="pressButton" type="submit" value="End Turn" />
+                    </form>
+                }
 
                 <table class="map-table">
                     <tbody>

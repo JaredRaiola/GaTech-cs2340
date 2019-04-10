@@ -118,6 +118,12 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     formValidationResult.fold(errorFunction, successFunction)
   }
 
+  def endTurn:Action[AnyContent] = {
+    newTurn
+    assignNewArmies
+    updatePlacements
+  }
+
   def updatePlacements:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     Ok(views.html.armyPlacement(additionalArmiesForm))
   }
@@ -148,12 +154,12 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
           GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
           GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
           armiesOnTurn = armiesOnTurn + data.numArmies
-          if (GameData.players(GameData.currPlayerIndex).armyBinCount == 0) {
-            newTurn
-            assignNewArmies
-          }
-          Ok(views.html.attackview(attackForm))
-          //Ok(views.html.armyPlacement(additionalArmiesForm))
+//          if (GameData.players(GameData.currPlayerIndex).armyBinCount == 0) {
+//            newTurn
+//            assignNewArmies
+//          }
+//          Ok(views.html.attackview(attackForm))
+          Ok(views.html.armyPlacement(additionalArmiesForm))
         }
       }
     }
@@ -162,18 +168,18 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     formValidationResult.fold(errorFunction, successFunction)
   }
 
-  def endTurn: Unit = {
-
-    if (armiesOnTurn < GameData.calculateNewArmies(GameData.currPlayerIndex)) {
-      Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "You need to place all of your new armies.")
-    }
-
-
-
-    newTurn
-    assignNewArmies
-
-
-  }
+//  def endTurn: Unit = {
+//
+//    if (armiesOnTurn < GameData.calculateNewArmies(GameData.currPlayerIndex)) {
+//      Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "You need to place all of your new armies.")
+//    }
+//
+//
+//
+//    newTurn
+//    assignNewArmies
+//
+//
+//  }
 
 }
