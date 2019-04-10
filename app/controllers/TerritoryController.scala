@@ -79,7 +79,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -2
       if (startStateIncomplete) {
-        Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
+        terrIndex = -3
       } else if (data.terr.toLowerCase() == "all random") {
         fillAll
         terrIndex = -1
@@ -108,9 +108,11 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
           GameData.turnCounter = 0
           Ok(views.html.armyPlacement(additionalArmiesForm))
         }
-      } else {
+      } else if (terrIndex == -2) {
         //failure
         Redirect(routes.TerritoryController.listTerritories()).flashing("Straight-up wack! " -> "You can't claim a territory there!")
+      } else {
+        Redirect(routes.TerritoryController.listTerritories()).flashing("Huh" -> "Something went wrong.")
       }
     }
 
@@ -119,8 +121,11 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   def endTurn:Action[AnyContent] = {
-    newTurn
-    assignNewArmies
+    if (GameData.getCurrentPlayer.armyBinCount == 0 && !GameData.isAttackLoop) {
+      GameData.turnCounter += 1
+      newTurn
+      assignNewArmies
+    }
     updatePlacements
   }
 
@@ -154,11 +159,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
           GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
           GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
           armiesOnTurn = armiesOnTurn + data.numArmies
-//          if (GameData.players(GameData.currPlayerIndex).armyBinCount == 0) {
-//            newTurn
-//            assignNewArmies
-//          }
-//          Ok(views.html.attackview(attackForm))
           Ok(views.html.armyPlacement(additionalArmiesForm))
         }
       }
@@ -167,19 +167,5 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val formValidationResult = additionalArmiesForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
   }
-
-//  def endTurn: Unit = {
-//
-//    if (armiesOnTurn < GameData.calculateNewArmies(GameData.currPlayerIndex)) {
-//      Redirect(routes.TerritoryController.updatePlacements).flashing("Hey!" -> "You need to place all of your new armies.")
-//    }
-//
-//
-//
-//    newTurn
-//    assignNewArmies
-//
-//
-//  }
 
 }
