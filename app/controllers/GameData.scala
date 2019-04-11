@@ -19,8 +19,8 @@ object GameData {
     terrArray(i) = new Territory("TerritoryName" + i, "", 0, continent)
   }
 
-  var attackDiceRoll: Array[Int] = null
-  var defenceDiceRoll: Array[Int] = null
+  var attackDiceRoll: Array[Int] = Array(0,0,0)
+  var defenceDiceRoll: Array[Int] = Array(0,0)
 
   def isAllDigits(x: String) = x forall Character.isDigit
   def isValidNum(str: String) = str != "" && isAllDigits(str)

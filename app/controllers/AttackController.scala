@@ -103,7 +103,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
 
         val terrsValidCheck = terrsValidVec.reduce((a, b) => a && b)
 
-        if (terrsValidCheck) {
+        if (true) {
 
           val myTerrIndex = data.terr.toInt
           val otherTerrIndex = data.otherTerr.toInt
@@ -131,10 +131,15 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
             val attackLosses = getAttackLosses(attackDiceCount, defenceDiceCount)
             myTerr.decrementArmy(attackLosses._1)
             otherTerr.decrementArmy(attackLosses._2)
+
             if (otherTerr.armyCount == 0) {
               otherTerr.setOwner(GameData.getCurrentPlayer.name)
               otherTerr.incrementArmy(attackDiceCount - attackLosses._1)
               myTerr.decrementArmy(attackDiceCount - attackLosses._1)
+
+              GameData.terrArray(myTerrIndex) = myTerr
+              GameData.terrArray(otherTerrIndex) = otherTerr
+
               Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name
                 + " just claimed Territory " + otherTerrIndex))
             } else {
