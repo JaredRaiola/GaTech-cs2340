@@ -132,19 +132,25 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
             myTerr.decrementArmy(attackLosses._1)
             otherTerr.decrementArmy(attackLosses._2)
 
+            GameData.terrArray(myTerrIndex) = myTerr
+            GameData.terrArray(otherTerrIndex) = otherTerr
+
+
             if (otherTerr.armyCount == 0) {
               otherTerr.setOwner(GameData.getCurrentPlayer.name)
               otherTerr.incrementArmy(attackDiceCount - attackLosses._1)
               myTerr.decrementArmy(attackDiceCount - attackLosses._1)
-
               GameData.terrArray(myTerrIndex) = myTerr
               GameData.terrArray(otherTerrIndex) = otherTerr
-
               Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name
                 + " just claimed Territory " + otherTerrIndex))
             } else {
-              Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name
-                + "lost " + attackLosses._1 + " armies without claiming Territory " + otherTerrIndex))
+              val defenderLossesString = attackLosses._2.toString
+              val attackerLossesString = attackLosses._1.toString
+              val defender = GameData.terrArray(otherTerrIndex).getOwner
+              val attacker = GameData.getCurrentPlayer.name
+              val displayString = attacker + " lost " + attackerLossesString + " armies and " + defender + " lost " + defenderLossesString + " armies"
+              Redirect(routes.AttackController.updateView()).flashing("Oh No! " -> displayString)
             }
           }
         } else {
