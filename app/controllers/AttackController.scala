@@ -48,7 +48,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
   def attackDiceLossTuple(attackDice: Array[Int], defenceDice: Array[Int], comparisonCount: Int) = {
     var attackLoss = 0
     var defenceLoss = 0
-    for (i <- 0 to comparisonCount) {
+    for (i <- 0 to comparisonCount - 1) {
       val loss: Int = attackDice(i) - defenceDice(i)
       if (loss > 0) {
         defenceLoss += 1
