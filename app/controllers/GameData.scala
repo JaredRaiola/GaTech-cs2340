@@ -6,7 +6,7 @@ object GameData {
   var players = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
   var currPlayerIndex: Int = 0
 
-  var randomNumberMaker = new scala.util.Random(555)
+  var randomNumberMaker = new scala.util.Random(55)
 
   val numTerritories = 48
   var turnCounter: Int = 0
@@ -21,6 +21,10 @@ object GameData {
 
   var attackDiceRoll: Array[Int] = null
   var defenceDiceRoll: Array[Int] = null
+
+  def isAllDigits(x: String) = x forall Character.isDigit
+  def isValidNum(str: String) = str != "" && isAllDigits(str)
+  def isInRange(str: String) = isValidNum(str) && str.toInt <= 47 && str.toInt >= 0
 
   def isAttackLoop: Boolean = {
     turnCounter >= players.size

@@ -26,9 +26,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   private var armiesOnTurn = 0
 
   private def startStateIncomplete = GameData.terrArray.isEmpty || GameData.players.size < 3
-  private def isAllDigits(x: String) = x forall Character.isDigit
-  private def isValidNum(str: String) = str != "" && isAllDigits(str)
-  private def isInRange(str: String) = isValidNum(str) && str.toInt <= 47 && str.toInt >= 0
+
   private def territoryIsOccupied(terrIndex: Int): Boolean = GameData.terrArray(terrIndex).ownerName != ""
   private def isArmyAmountInvalid(numArmies: Int): Boolean = numArmies <= 0 || numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount
   private def getRandomIndex = {
@@ -85,7 +83,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         GameData.turnCounter = 0
       } else if (data.terr.toLowerCase() == "random") {
         terrIndex = getRandomIndex
-      } else if (isInRange(data.terr) && !territoryIsOccupied(data.terr.toInt)) {
+      } else if (GameData.isInRange(data.terr) && !territoryIsOccupied(data.terr.toInt)) {
         terrIndex = data.terr.toInt
       }
       if (terrIndex > -2) {
@@ -145,9 +143,9 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       var terrIndex = -1
       if (startStateIncomplete) {
         Redirect(routes.TerritoryController.updatePlacements).flashing("Huh" -> "Something went wrong.")
-      } else if (!isInRange(data.terr)) {
+      } else if (!GameData.isInRange(data.terr)) {
         Redirect(routes.TerritoryController.updatePlacements).flashing("Warning: " -> "This is not a valid territory value.")
-      } else if (isInRange(data.terr) & !GameData.doesCurrPlayerOwnTerr(GameData.terrArray(data.terr.toInt))) {
+      } else if (GameData.isInRange(data.terr) & !GameData.doesCurrPlayerOwnTerr(GameData.terrArray(data.terr.toInt))) {
         Redirect(routes.TerritoryController.updatePlacements).flashing("You can't do that! " -> "You don't own that territory.")
       } else {
         terrIndex = data.terr.toInt
