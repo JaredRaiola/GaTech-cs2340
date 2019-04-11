@@ -64,9 +64,9 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
    * returns a sorted array (largest to smallest) of length diceCount of numbers 1 to 6
    */
   private def getDiceRollArray(diceCount: Int): Array[Int] = {
-    val diceNumVect = for (i <- 0 to diceCount) yield {
+    val diceNumVect = for (i <- 1 to diceCount) yield {
       val rand = new scala.util.Random
-      val num = rand.nextInt(5) + 1
+      val num = rand.nextInt(6) + 1
       num
     }
     diceNumVect.toArray.sortWith(_ > _)
@@ -106,7 +106,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
       } else if (!checkDefenceDiceCount(defenceDiceCount, otherTerr)) {
         Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Thats an invalid number of dice for the defending territory")
       } else if (!GameData.checkTerritoryAdjacency(myTerr, otherTerr)) {
-        Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Those territories dont share a border")
+        Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Those territories do not share a border")
       } else { // i hope there arent any other errors
                //do all the attack stuff
         GameData.attackDiceRoll = getDiceRollArray(attackDiceCount)
@@ -116,6 +116,8 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
         otherTerr.decrementArmy(attackLosses._2)
         if (otherTerr.armyCount == 0) {
           otherTerr.setOwner(GameData.getCurrentPlayer.name)
+          otherTerr.incrementArmy(attackDiceCount - attackLosses._1)
+          myTerr.decrementArmy(attackDiceCount - attackLosses._1)
           Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name
             + " just claimed Territory " + otherTerrIndex))
         } else {
