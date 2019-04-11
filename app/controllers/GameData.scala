@@ -6,6 +6,8 @@ object GameData {
   var players = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
   var currPlayerIndex: Int = 0
 
+  var randomNumberMaker = new scala.util.Random(555)
+
   val numTerritories = 48
   var turnCounter: Int = 0
   val terrArray = new Array[Territory](numTerritories)
@@ -35,6 +37,8 @@ object GameData {
     } else {
       currPlayerIndex += 1
     }
+    //to keep things randomer
+    randomNumberMaker.nextInt(10)
   }
 
 

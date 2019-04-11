@@ -65,7 +65,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
    */
   private def getDiceRollArray(diceCount: Int): Array[Int] = {
     val diceNumVect = for (i <- 1 to diceCount) yield {
-      val rand = new scala.util.Random
+      val rand = GameData.randomNumberMaker
       val num = rand.nextInt(6) + 1
       num
     }
