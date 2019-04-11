@@ -26,6 +26,9 @@ object GameData {
   def isValidNum(str: String) = str != "" && isAllDigits(str)
   def isInRange(str: String) = isValidNum(str) && str.toInt <= 47 && str.toInt >= 0
 
+ def startStateIncomplete = terrArray.isEmpty || players.size < 3
+
+
   def isAttackLoop: Boolean = {
     turnCounter >= players.size
   }

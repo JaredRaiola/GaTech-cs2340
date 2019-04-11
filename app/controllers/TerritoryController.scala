@@ -25,7 +25,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
 
   private var armiesOnTurn = 0
 
-  private def startStateIncomplete = GameData.terrArray.isEmpty || GameData.players.size < 3
 
   private def territoryIsOccupied(terrIndex: Int): Boolean = GameData.terrArray(terrIndex).ownerName != ""
   private def isArmyAmountInvalid(numArmies: Int): Boolean = numArmies <= 0 || numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount
@@ -74,7 +73,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val successFunction = { data: TerritoryData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -2
-      if (startStateIncomplete) {
+      if (GameData.startStateIncomplete) {
         terrIndex = -3
       } else if (data.terr.toLowerCase() == "all random") {
         fillAll
@@ -141,7 +140,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val successFunction = { data: AdditionalArmiesData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
-      if (startStateIncomplete) {
+      if (GameData.startStateIncomplete) {
         Redirect(routes.TerritoryController.updatePlacements).flashing("Huh" -> "Something went wrong.")
       } else if (!GameData.isInRange(data.terr)) {
         Redirect(routes.TerritoryController.updatePlacements).flashing("Warning: " -> "This is not a valid territory value.")
