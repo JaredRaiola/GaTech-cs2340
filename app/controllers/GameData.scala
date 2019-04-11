@@ -3,10 +3,10 @@ package controllers
 import models.{Player, Territory}
 
 object GameData {
-  var players = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
+  var players: scala.collection.mutable.ArrayBuffer[Player] = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
   var currPlayerIndex: Int = 0
 
-  var randomNumberMaker = new scala.util.Random(55)
+  var randomNumberMaker: scala.util.Random = new scala.util.Random()
 
   val numTerritories = 48
   var turnCounter: Int = 0
@@ -22,18 +22,18 @@ object GameData {
   var attackDiceRoll: Array[Int] = Array(0,0,0)
   var defenceDiceRoll: Array[Int] = Array(0,0)
 
-  def isAllDigits(x: String) = x forall Character.isDigit
-  def isValidNum(str: String) = str != "" && isAllDigits(str)
-  def isInRange(str: String) = isValidNum(str) && str.toInt <= 47 && str.toInt >= 0
+  def isAllDigits(x: String): Boolean = x forall Character.isDigit
+  def isValidNum(str: String): Boolean = str != "" && isAllDigits(str)
+  def isInRange(str: String): Boolean = isValidNum(str) && str.toInt <= 47 && str.toInt >= 0
 
- def startStateIncomplete = terrArray.isEmpty || players.size < 3
+ def startStateIncomplete: Boolean = terrArray.isEmpty || players.size < 3
 
 
   def isAttackLoop: Boolean = {
     turnCounter >= players.size
   }
 
-  def getCurrentPlayer = {
+  def getCurrentPlayer: Player = {
     players(currPlayerIndex)
   }
 
@@ -44,8 +44,6 @@ object GameData {
     } else {
       currPlayerIndex += 1
     }
-    //to keep things randomer
-    randomNumberMaker.nextInt(10)
   }
 
 
@@ -58,7 +56,7 @@ object GameData {
     terr.getOwner == GameData.players(GameData.currPlayerIndex).name
   }
 
-  def calculateTerritoriesOwned(index: Int) = {
+  def calculateTerritoriesOwned(index: Int): Int = {
     var territoriesOwned = 0
     for (i <- terrArray.indices) {
       if (terrArray(i).getOwner == players(index).name) {
@@ -89,13 +87,13 @@ object GameData {
     numContinentsOwned
   }
 
-  def assignNewArmies = {
+  def assignNewArmies: Unit = {
     var index = GameData.currPlayerIndex
     var newArmies = GameData.calculateNewArmies(index)
     GameData.players(index).incrementArmyCount(newArmies)
   }
 
-  def calculateNewArmies(index: Int) = {
+  def calculateNewArmies(index: Int): Int = {
     var newArmies = 0
     var territoriesOwned = calculateTerritoriesOwned(index)
     var continentsCount = calculateContinentsArray(index)
