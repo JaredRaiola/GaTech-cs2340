@@ -49,11 +49,7 @@
                     }
                 </div>
 
-                <form id="playGame" action="@{
-                        GameData.newTurn
-                        GameData.assignNewArmies
-                        controllers.routes.TerritoryController.updatePlacements
-                    }">
+                <form id="playGame" action="@controllers.routes.TerritoryController.endTurn">
                     <input class="pressButton" type="submit" value="END ATTACK PHASE" />
                 </form>
 
