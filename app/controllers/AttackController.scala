@@ -67,7 +67,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
    * returns a sorted array (largest to smallest) of length diceCount of numbers 1 to 6
    */
   private def getDiceRollArray(diceCount: Int): Array[Int] = {
-    val diceNumVect = for (i <- 0 to diceCount) yield {
+    val diceNumVect = for (i <- 1 to diceCount) yield {
       val rand = new scala.util.Random
       val num = rand.nextInt(6) + 1
       num
@@ -124,13 +124,13 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
                 otherTerr.incrementArmy(armiesMoving)
                 myTerr.decrementArmy(armiesMoving)
                 Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name
-                  + " just claimed Territory " + otherTerrIndex + "\n" + "Attacker Rolled: " + GameData.attackDiceRoll(0) + ", " + 
-                  GameData.attackDiceRoll(1) + ", " + GameData.attackDiceRoll(2) + "\n" + 
+                  + " just claimed Territory " + otherTerrIndex + "\n" + "Attacker Rolled: " + GameData.attackDiceRoll(0) + ", " +
+                  GameData.attackDiceRoll(1) + ", " + GameData.attackDiceRoll(2) + "\n" +
                   "Defender Rolled: " + GameData.defenceDiceRoll(0) + ", " + GameData.defenceDiceRoll(1)))
               } else {
                 Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name
                     + " lost " + attackLosses._1 + " armies without claiming Territory " + otherTerrIndex + ".  " +
-                    "Attacker Rolled: " + GameData.attackDiceRoll(0) + ", " + GameData.attackDiceRoll(1) + ", " + GameData.attackDiceRoll(2) + ".  " + 
+                    "Attacker Rolled: " + GameData.attackDiceRoll(0) + ", " + GameData.attackDiceRoll(1) + ", " + GameData.attackDiceRoll(2) + ".  " +
                     "Defender Rolled: " + GameData.defenceDiceRoll(0) + ", " + GameData.defenceDiceRoll(1)))
               }
             } else {
