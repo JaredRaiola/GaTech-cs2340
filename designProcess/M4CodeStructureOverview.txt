@@ -6,8 +6,11 @@ Refactored Code in M4:
 Newly added Features in M4:
 
       backend dice roll calulations added to AttackController
-
+              getAttackLosses, attackDiceLossTuple, getDiceRollArray private funtions to handle calulations and data updates
       GameData now contains Arrays of Attack and Defence dice rolls
+               attackDiceRoll
+               defenceDiceRoll
+               these variables are used to display dice rolls to the user and to work with army loss calulations in AttackController
       Attacking is fully implemented with proper error checking, according to the rules outlines in the project outlines
 
 
