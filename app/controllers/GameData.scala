@@ -28,6 +28,26 @@ object GameData {
 
   def startStateIncomplete: Boolean = terrArray.isEmpty || players.size < 3
 
+  def getAttackRolls = {
+    var rolls = ""
+    for (w <- attackDiceRoll) {
+      if (w != 0) {
+        rolls += w + "  "
+      }
+    }
+    rolls
+  }
+
+  def getDefenceRolls = {
+    var rolls = ""
+    for (w <- defenceDiceRoll) {
+      if (w != 0) {
+        rolls += w + "  "
+      }
+    }
+    rolls
+  }
+
 
   def isAttackLoop: Boolean = {
     turnCounter >= players.size
