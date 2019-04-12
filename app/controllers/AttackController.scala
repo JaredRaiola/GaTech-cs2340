@@ -34,7 +34,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
   /*
    * returns tuple of length 2 consisting of: attacker losses, defender losses
    */
-  def getAttackLosses(myDiceCount: Int, otherDiceCount: Int) = {
+  private def getAttackLosses(myDiceCount: Int, otherDiceCount: Int) = {
     val attackDice = GameData.attackDiceRoll
     val defenceDice = GameData.defenceDiceRoll
     val lossTuple = if (myDiceCount > otherDiceCount) {
@@ -45,7 +45,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     lossTuple
   }
 
-  def attackDiceLossTuple(attackDice: Array[Int], defenceDice: Array[Int], comparisonCount: Int) = {
+  private def attackDiceLossTuple(attackDice: Array[Int], defenceDice: Array[Int], comparisonCount: Int) = {
     var attackLoss = 0
     var defenceLoss = 0
     for (i <- 0 to comparisonCount - 1) {

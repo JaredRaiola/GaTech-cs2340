@@ -1,0 +1,17 @@
+Refactored Code in M4:
+
+           Moved many error checking functions to GameData to allow for more reuse between controllers
+
+
+Newly added Features in M4:
+
+      backend dice roll calulations added to AttackController
+
+      GameData now contains Arrays of Attack and Defence dice rolls
+      Attacking is fully implemented with proper error checking, according to the rules outlines in the project outlines
+
+
+
+Other Notes:
+
+      Mysterious scala style error present in every file "String index out of range: -1"
