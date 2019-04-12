@@ -11,7 +11,7 @@ object AttackForm {
       "terr" -> nonEmptyText,
       "otherTerr" -> nonEmptyText,
       "attackDiceCount" -> number,
-      "defenseDiceCount" -> number
+      "defenceDiceCount" -> number
     )(AttackData.apply)(AttackData.unapply)
   )
 }
