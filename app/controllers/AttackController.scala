@@ -50,15 +50,12 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     var defenceLoss = 0
     for (i <- 0 to comparisonCount - 1) {
       val loss: Int = attackDice(i) - defenceDice(i)
-      println("Comparing " + attackDice(i) + " and " + defenceDice(i))
-      println("Loss: " + loss)
       if (loss > 0) {
         defenceLoss += 1
       } else {
         attackLoss += 1
       }
     }
-    println((attackLoss, defenceLoss))
     (attackLoss, defenceLoss)
   }
 
