@@ -124,10 +124,14 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
                 otherTerr.incrementArmy(armiesMoving)
                 myTerr.decrementArmy(armiesMoving)
                 Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name
-                  + " just claimed Territory " + otherTerrIndex))
+                  + " just claimed Territory " + otherTerrIndex + "\n" + "Attacker Rolled: " + GameData.attackDiceRoll(0) + ", " + 
+                  GameData.attackDiceRoll(1) + ", " + GameData.attackDiceRoll(2) + "\n" + 
+                  "Defender Rolled: " + GameData.defenceDiceRoll(0) + ", " + GameData.defenceDiceRoll(1)))
               } else {
                 Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name
-                    + " lost " + attackLosses._1 + " armies without claiming Territory " + otherTerrIndex))
+                    + " lost " + attackLosses._1 + " armies without claiming Territory " + otherTerrIndex + ".  " +
+                    "Attacker Rolled: " + GameData.attackDiceRoll(0) + ", " + GameData.attackDiceRoll(1) + ", " + GameData.attackDiceRoll(2) + ".  " + 
+                    "Defender Rolled: " + GameData.defenceDiceRoll(0) + ", " + GameData.defenceDiceRoll(1)))
               }
             } else {
               val output = "You can't roll that many die! (You must roll up to 2 die and you must have at least as many armies in the defending territory per number of die you roll)"
