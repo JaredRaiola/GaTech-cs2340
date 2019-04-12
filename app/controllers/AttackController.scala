@@ -36,7 +36,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
    */
   def getAttackLosses(myDiceCount: Int, otherDiceCount: Int) = {
     val attackDice = GameData.attackDiceRoll
-    val defenceDice = GameData.attackDiceRoll
+    val defenceDice = GameData.defenceDiceRoll
     val lossTuple = if (myDiceCount > otherDiceCount) {
       attackDiceLossTuple(attackDice, defenceDice, otherDiceCount)
     } else {
@@ -50,12 +50,15 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     var defenceLoss = 0
     for (i <- 0 to comparisonCount - 1) {
       val loss: Int = attackDice(i) - defenceDice(i)
+      println("Comparing " + attackDice(i) + " and " + defenceDice(i))
+      println("Loss: " + loss)
       if (loss > 0) {
         defenceLoss += 1
       } else {
         attackLoss += 1
       }
     }
+    println((attackLoss, defenceLoss))
     (attackLoss, defenceLoss)
   }
 
@@ -132,6 +135,8 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
                    //do all the attack stuff
             GameData.attackDiceRoll = getDiceRollArray(attackDiceCount)
             GameData.defenceDiceRoll = getDiceRollArray(defenceDiceCount)
+            println(GameData.attackDiceRoll.deep.mkString(", "))
+            println(GameData.defenceDiceRoll.deep.mkString(", "))
             val attackLosses = getAttackLosses(attackDiceCount, defenceDiceCount)
             myTerr.decrementArmy(attackLosses._1)
             otherTerr.decrementArmy(attackLosses._2)
