@@ -1,5 +1,5 @@
 @(form: Form[AttackForm.AttackData])(implicit request: MessagesRequestHeader)
-    @main("armyview") {
+    @main("attackview") {
 
         <html lang="en">
             <head>
@@ -43,14 +43,14 @@
                         <p>Attack Dice</p>
                         @helper.inputText(form("attackDiceCount"))
                         <p>Defense Dice</p>
-                        @helper.inputText(form("defenseDiceCount"))
+                        @helper.inputText(form("defenceDiceCount"))
 
                         <button class="pressButton">ATTACK</button>
                     }
                 </div>
 
                 <form id="playGame" action="@controllers.routes.TerritoryController.endTurn">
-                    <input class="pressButton" type="submit" value="END ATTACK PHASE" />
+                    <input class="pressButton" type="submit" value="END TURN" />
                 </form>
 
                 <table class="map-table">
