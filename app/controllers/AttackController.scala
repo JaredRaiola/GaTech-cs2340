@@ -113,6 +113,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
           } else if (attackDiceCount < myTerr.armyCount && attackDiceCount > 0 && attackDiceCount < 4) {
             if (defenceDiceCount <= myTerr.armyCount && defenceDiceCount > 0 && defenceDiceCount < 3) {
               //do all the attack stuff
+              val otherOwnerName = otherTerr.ownerName
               GameData.attackDiceRoll = getDiceRollArray(attackDiceCount)
               GameData.defenceDiceRoll = getDiceRollArray(defenceDiceCount)
               val attackLosses = getAttackLosses(attackDiceCount, defenceDiceCount)
@@ -123,15 +124,13 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
                 val armiesMoving = (attackDiceCount - attackLosses._1)
                 otherTerr.incrementArmy(armiesMoving)
                 myTerr.decrementArmy(armiesMoving)
-                Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name
-                  + " just claimed Territory " + otherTerrIndex + "\n" + "Attacker Rolled: " + GameData.attackDiceRoll(0) + ", " +
-                  GameData.attackDiceRoll(1) + ", " + GameData.attackDiceRoll(2) + "\n" +
-                  "Defender Rolled: " + GameData.defenceDiceRoll(0) + ", " + GameData.defenceDiceRoll(1)))
+                Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name +
+                  " just claimed Territory " + otherTerrIndex + ". " + GameData.getCurrentPlayer.name + " lost "  + attackLosses._1 + " armies. " + otherOwnerName + " lost " + 
+                  attackLosses._2 + " armies."))
               } else {
-                Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name
-                    + " lost " + attackLosses._1 + " armies without claiming Territory " + otherTerrIndex + ".  " +
-                    "Attacker Rolled: " + GameData.attackDiceRoll(0) + ", " + GameData.attackDiceRoll(1) + ", " + GameData.attackDiceRoll(2) + ".  " +
-                    "Defender Rolled: " + GameData.defenceDiceRoll(0) + ", " + GameData.defenceDiceRoll(1)))
+                Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name +
+                    " did not claim Territory " + otherTerrIndex + ". " + GameData.getCurrentPlayer.name + " lost "  + attackLosses._1 + " armies. " + otherOwnerName + " lost " + 
+                  attackLosses._2 + " armies."))
               }
             } else {
               val output = "You can't roll that many die! (You must roll up to 2 die and you must have at least as many armies in the defending territory per number of die you roll)"
