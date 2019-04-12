@@ -1,5 +1,5 @@
 @(form: Form[AttackForm.AttackData])(implicit request: MessagesRequestHeader)
-    @main("armyview") {
+    @main("attackview") {
 
         <html lang="en">
             <head>
@@ -32,23 +32,24 @@
 
                 <h3>Map</h3>
                 <div class="name-input">
-                @helper.form(controllers.routes.AttackController.attack) {
-                    <h5> Enter The territory you want attacked, the Territory you are attacking with,
-                    the number of armies, and the number of armies defending the territory </h5>
-                    @helper.CSRF.formField
-                    <p>Your Territory</p>
-                    @helper.inputText(form("terr"))
-                    <p>Other Player's Territory</p>
-                    @helper.inputText(form("otherTerr"))
-                    <p>Attack Dice</p>
-                    @helper.inputText(form("attackDiceCount"))
-                    <p>Defense Dice</p>
-                    @helper.inputText(form("defenseDiceCount"))
 
-                    <button class="pressButton">YEH</button>
+                    @helper.form(controllers.routes.AttackController.attack) {
+                        <h5> Enter The territory you want attacked, the Territory you are attacking with,
+                        the number of armies, and the number of armies defending the territory </h5>
+                        @helper.CSRF.formField
+                        <p>Your Territory</p>
+                        @helper.inputText(form("terr"))
+                        <p>Other Player's Territory</p>
+                        @helper.inputText(form("otherTerr"))
+                        <p>Attack Dice</p>
+                        @helper.inputText(form("attackDiceCount"))
+                        <p>Defense Dice</p>
+                        @helper.inputText(form("defenceDiceCount"))
 
 
-                }</div>
+                <form id="playGame" action="@controllers.routes.TerritoryController.endTurn">
+                    <input class="pressButton" type="submit" value="END TURN" />
+                </form>
 
                 <table class="map-table">
                     <tbody>

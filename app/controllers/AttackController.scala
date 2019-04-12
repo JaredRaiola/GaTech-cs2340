@@ -76,6 +76,10 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     Ok(views.html.attackview(attackForm))
   }
 
+  def beginAttackPhase:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
+    GameData.newTurn
+    Ok(views.html.attackview(attackForm))
+  }
 
   def attack:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[AttackData] =>
