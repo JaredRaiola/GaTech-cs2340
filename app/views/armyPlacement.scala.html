@@ -8,7 +8,6 @@
             </head>
             <body>
                 <h3>Players</h3>
-                <p>Sad debug: @{GameData.turnCounter}</p>
                 <table class="army-list">
                     <thead>
                         <tr><th>Player Name</th> <th>Army Count </th>
@@ -17,7 +16,7 @@
                     @for(w <- GameData.players) {
                         @if(GameData.players(GameData.currPlayerIndex).equals(w)) {
                             <tr bgcolor="#228b22"><td>@w.name</td> <td>@w.armyBinCount</td></tr>
-                        }@if(!GameData.players(GameData.currPlayerIndex).equals(w)){
+                        } else {
                             <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
                         }
                     }
@@ -59,21 +58,19 @@
                     }</div>
                 }
 
-                @if(GameData.getCurrentPlayer.armyBinCount == 0 && GameData.isAttackLoop && GameData.turnCounter != GameData.players.size) {
+                @if(GameData.getCurrentPlayer.armyBinCount == 0 && GameData.isAttackLoop) {
                     <form id="playGame" action="@routes.AttackController.updateView">
                         <input class="pressButton" type="submit" value="ATTACK" />
                     </form>
                 }
 
-                @if(GameData.getCurrentPlayer.armyBinCount == 0 && GameData.turnCounter == GameData.players.size - 1) {
-                    <form id="playGame" action="@{
-                        GameData.newTurn
-                        routes.AttackController.beginAttackPhase}">
-                        <input class="pressButton" type="submit" value="INITIATE ATTACK PHASE" />
-                    </form>
-                }
+                @*@if(GameData.getCurrentPlayer.armyBinCount == 0 && GameData.turnCounter == GameData.players.size - 1) {*@
+                    @*<form id="playGame" action="@GameData.newTurn @routes.AttackController.beginAttackPhase">*@
+                        @*<input class="pressButton" type="submit" value="INITIATE ATTACK PHASE" />*@
+                    @*</form>*@
+                @*}*@
 
-                @if(GameData.getCurrentPlayer.armyBinCount == 0 && !GameData.isAttackLoop && GameData.turnCounter != GameData.players.size - 1) {
+                @if(GameData.getCurrentPlayer.armyBinCount == 0) {
                     <form id="playGame" action="@routes.TerritoryController.endTurn">
                         <input class="pressButton" type="submit" value="END TURN" />
                     </form>
