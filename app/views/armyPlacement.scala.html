@@ -8,6 +8,7 @@
             </head>
             <body>
                 <h3>Players</h3>
+                <p>Sad debug: @{GameData.turnCounter}</p>
                 <table class="army-list">
                     <thead>
                         <tr><th>Player Name</th> <th>Army Count </th>
@@ -41,7 +42,7 @@
                 }
                 <h3>Map</h3>
 
-                @if(!(GameData.getCurrentPlayer.armyBinCount == 0 && !GameData.isAttackLoop)) {
+                @if(!(GameData.getCurrentPlayer.armyBinCount == 0)) {
                     <div class="name-input">
 
                     @helper.form(controllers.routes.TerritoryController.placeAdditionalArmies) {
@@ -58,13 +59,21 @@
                     }</div>
                 }
 
-                @if(GameData.getCurrentPlayer.armyBinCount == 0 && GameData.isAttackLoop) {
+                @if(GameData.getCurrentPlayer.armyBinCount == 0 && GameData.isAttackLoop && GameData.turnCounter != GameData.players.size) {
                     <form id="playGame" action="@routes.AttackController.updateView">
                         <input class="pressButton" type="submit" value="ATTACK" />
                     </form>
                 }
 
-                @if(GameData.getCurrentPlayer.armyBinCount == 0 && !GameData.isAttackLoop) {
+                @if(GameData.getCurrentPlayer.armyBinCount == 0 && GameData.turnCounter == GameData.players.size - 1) {
+                    <form id="playGame" action="@{
+                        GameData.newTurn
+                        routes.AttackController.beginAttackPhase}">
+                        <input class="pressButton" type="submit" value="INITIATE ATTACK PHASE" />
+                    </form>
+                }
+
+                @if(GameData.getCurrentPlayer.armyBinCount == 0 && !GameData.isAttackLoop && GameData.turnCounter != GameData.players.size - 1) {
                     <form id="playGame" action="@routes.TerritoryController.endTurn">
                         <input class="pressButton" type="submit" value="END TURN" />
                     </form>

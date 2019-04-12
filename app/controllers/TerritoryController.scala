@@ -117,7 +117,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
 
   def endTurn:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     if (GameData.getCurrentPlayer.armyBinCount == 0) {
-      GameData.turnCounter += 1
+      //GameData.turnCounter += 1
       newTurn
       assignNewArmies
     }
@@ -136,7 +136,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       // Note how we pass the form with errors to the template.
       BadRequest(views.html.armyPlacement(additionalArmiesForm))
     }
-
     val successFunction = { data: AdditionalArmiesData =>
       // This is the good case, where the form was successfully parsed as a Data object.
       var terrIndex = -1
