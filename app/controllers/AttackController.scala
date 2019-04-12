@@ -36,7 +36,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
    */
   def getAttackLosses(myDiceCount: Int, otherDiceCount: Int) = {
     val attackDice = GameData.attackDiceRoll
-    val defenceDice = GameData.attackDiceRoll
+    val defenceDice = GameData.defenceDiceRoll
     val lossTuple = if (myDiceCount > otherDiceCount) {
       attackDiceLossTuple(attackDice, defenceDice, otherDiceCount)
     } else {
@@ -113,6 +113,9 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
               otherTerr.decrementArmy(attackLosses._2)
               if (otherTerr.armyCount == 0) {
                 otherTerr.setOwner(GameData.getCurrentPlayer.name)
+                var armiesMoving = (attackDiceCount - attackLosses._1)
+                otherTerr.incrementArmy(armiesMoving)
+                myTerr.decrementArmy(armiesMoving)
                 Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name
                   + " just claimed Territory " + otherTerrIndex))
               } else {
