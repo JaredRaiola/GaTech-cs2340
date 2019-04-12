@@ -103,7 +103,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
           val myTerr: Territory = GameData.terrArray(myTerrIndex)
           val otherTerr: Territory = GameData.terrArray(otherTerrIndex)
           val attackDiceCount = data.attackDiceCount.toInt
-          val defenceDiceCount = data.defenseDiceCount.toInt
+          val defenceDiceCount = data.defenceDiceCount.toInt
           if (!GameData.doesCurrPlayerOwnTerr(myTerr)) {
             Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "You cant attack from someone elses territory")
           } else if (GameData.doesCurrPlayerOwnTerr(otherTerr)) {
