@@ -48,7 +48,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
   def attackDiceLossTuple(attackDice: Array[Int], defenceDice: Array[Int], comparisonCount: Int) = {
     var attackLoss = 0
     var defenceLoss = 0
-    for (i <- 0 to comparisonCount) {
+    for (i <- 0 to comparisonCount - 1) {
       val loss: Int = attackDice(i) - defenceDice(i)
       println("Comparing " + attackDice(i) + " and " + defenceDice(i))
       println("Loss: " + loss)
@@ -69,7 +69,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
   private def getDiceRollArray(diceCount: Int): Array[Int] = {
     val diceNumVect = for (i <- 0 to diceCount) yield {
       val rand = new scala.util.Random
-      val num = rand.nextInt(5) + 1
+      val num = rand.nextInt(6) + 1
       num
     }
     diceNumVect.toArray.sortWith(_ > _)
