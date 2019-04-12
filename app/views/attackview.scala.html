@@ -46,6 +46,9 @@
                         <p>Defense Dice</p>
                         @helper.inputText(form("defenceDiceCount"))
 
+                        <button class="pressButton">ATTACK</button>
+                    }
+                </div>
 
                 <form id="playGame" action="@controllers.routes.TerritoryController.endTurn">
                     <input class="pressButton" type="submit" value="END TURN" />

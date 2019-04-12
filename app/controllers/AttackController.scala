@@ -50,12 +50,15 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     var defenceLoss = 0
     for (i <- 0 to comparisonCount) {
       val loss: Int = attackDice(i) - defenceDice(i)
+      println("Comparing " + attackDice(i) + " and " + defenceDice(i))
+      println("Loss: " + loss)
       if (loss > 0) {
         defenceLoss += 1
       } else {
         attackLoss += 1
       }
     }
+    println((attackLoss, defenceLoss))
     (attackLoss, defenceLoss)
   }
 
@@ -100,7 +103,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
           val myTerr: Territory = GameData.terrArray(myTerrIndex)
           val otherTerr: Territory = GameData.terrArray(otherTerrIndex)
           val attackDiceCount = data.attackDiceCount.toInt
-          val defenceDiceCount = data.defenseDiceCount.toInt
+          val defenceDiceCount = data.defenceDiceCount.toInt
           if (!GameData.doesCurrPlayerOwnTerr(myTerr)) {
             Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "You cant attack from someone elses territory")
           } else if (GameData.doesCurrPlayerOwnTerr(otherTerr)) {
