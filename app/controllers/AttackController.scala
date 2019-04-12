@@ -127,7 +127,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
                   + " just claimed Territory " + otherTerrIndex))
               } else {
                 Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name
-                    + "lost " + attackLosses._1 + " armies without claiming Territory " + otherTerrIndex))
+                    + " lost " + attackLosses._1 + " armies without claiming Territory " + otherTerrIndex))
               }
             } else {
               val output = "You can't roll that many die! (You must roll up to 2 die and you must have at least as many armies in the defending territory per number of die you roll)"
