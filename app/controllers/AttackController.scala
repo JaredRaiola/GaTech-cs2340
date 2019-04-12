@@ -108,7 +108,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
             Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "You cant attack from someone elses territory")
           } else if (GameData.doesCurrPlayerOwnTerr(otherTerr)) {
             Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Stop hitting yourself")
-          } else if (!GameData.checkTerritoryAdjacency(myTerr, otherTerr)) {
+          } else if (!GameData.checkTerritoryAdjacency(myTerrIndex, otherTerrIndex)) {
             Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Those territories dont share a border")
           } else if (attackDiceCount < myTerr.armyCount && attackDiceCount > 0 && attackDiceCount < 4) {
             if (defenceDiceCount <= myTerr.armyCount && defenceDiceCount > 0 && defenceDiceCount < 3) {
@@ -125,11 +125,11 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
                 otherTerr.incrementArmy(armiesMoving)
                 myTerr.decrementArmy(armiesMoving)
                 Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name +
-                  " just claimed Territory " + otherTerrIndex + ". " + GameData.getCurrentPlayer.name + " lost "  + attackLosses._1 + " armies. " + otherOwnerName + " lost " + 
+                  " just claimed Territory " + otherTerrIndex + ". " + GameData.getCurrentPlayer.name + " lost "  + attackLosses._1 + " armies. " + otherOwnerName + " lost " +
                   attackLosses._2 + " armies."))
               } else {
                 Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name +
-                    " did not claim Territory " + otherTerrIndex + ". " + GameData.getCurrentPlayer.name + " lost "  + attackLosses._1 + " armies. " + otherOwnerName + " lost " + 
+                    " did not claim Territory " + otherTerrIndex + ". " + GameData.getCurrentPlayer.name + " lost "  + attackLosses._1 + " armies. " + otherOwnerName + " lost " +
                   attackLosses._2 + " armies."))
               }
             } else {
