@@ -26,5 +26,6 @@ GET      /armyPlacement                controllers.TerritoryController.updatePla
 POST     /armyPlacement                controllers.TerritoryController.placeAdditionalArmies
 
 GET      /attackview                controllers.AttackController.updateView
+
 GET      /attackview                controllers.AttackController.beginAttackPhase
 POST     /attackview                controllers.AttackController.attack
