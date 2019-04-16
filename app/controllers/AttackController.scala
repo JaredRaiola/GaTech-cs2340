@@ -137,32 +137,43 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
   }
 
 
-  private def errorHandleAttackInput(data: AttackData): (String, String) = {
-    val myTerrIndex: Int = data.terr.toInt
-    val otherTerrIndex: Int = data.otherTerr.toInt
-    val attackDiceCount: Int = data.attackDiceCount.toInt
-    val defenceDiceCount: Int = data.defenceDiceCount.toInt
 
-    if (!(checkTerrInRange(myTerrIndex) && checkTerrInRange(otherTerrIndex))) {
-      ("Hey!", "You can't attack from a territory that does't exist!")
-    } else if (!GameData.doesCurrPlayerOwnTerr(GameData.terrArray(myTerrIndex))) {
-      ("Hey!", "You cant attack from someone elses territory")
-    } else if (GameData.doesCurrPlayerOwnTerr(GameData.terrArray(otherTerrIndex))) {
-      ("Hey!", "Stop hitting yourself")
-    } else if (!GameData.checkTerritoryAdjacency(myTerrIndex, otherTerrIndex)) {
-      ("Hey!", "Those territories dont share a border")
-    } else if (!checkAttackDiceCount(attackDiceCount,
-      GameData.terrArray(myTerrIndex))) {
-      ("Hey attacker!", "You can't roll that many die! (You must roll up to 3 die and you must have at least as many armies in the attacking territory per number of die you roll)")
-    } else if (!checkDefenceDiceCount(defenceDiceCount,
-      GameData.terrArray(otherTerrIndex))) {
-      ("Hey defender!", "You can't roll that many die! (You must roll up to 2 die and you must have at least as many armies in the defending territory per number of die you roll)")
+  private def errorHandleAttackInput(data: AttackData): (String, String) = {
+    if (checkValidNums(data)) {
+      val myTerrIndex: Int = data.terr.toInt
+      val otherTerrIndex: Int = data.otherTerr.toInt
+      val attackDiceCount: Int = data.attackDiceCount.toInt
+      val defenceDiceCount: Int = data.defenceDiceCount.toInt
+      if (!(checkTerrInRange(myTerrIndex) && checkTerrInRange(otherTerrIndex))) {
+        ("Hey!", "You can't attack from a territory that does't exist!")
+      } else if (!GameData.doesCurrPlayerOwnTerr(GameData.terrArray(myTerrIndex))) {
+        ("Hey!", "You cant attack from someone elses territory")
+      } else if (GameData.doesCurrPlayerOwnTerr(GameData.terrArray(otherTerrIndex))) {
+        ("Hey!", "Stop hitting yourself")
+      } else if (!GameData.checkTerritoryAdjacency(myTerrIndex, otherTerrIndex)) {
+        ("Hey!", "Those territories dont share a border")
+      } else if (!checkAttackDiceCount(attackDiceCount,
+        GameData.terrArray(myTerrIndex))) {
+        ("Hey attacker!", "You can't roll that many die! (You must roll up to 3 die and you must have at least as many armies in the attacking territory per number of die you roll)")
+      } else if (!checkDefenceDiceCount(defenceDiceCount,
+        GameData.terrArray(otherTerrIndex))) {
+        ("Hey defender!", "You can't roll that many die! (You must roll up to 2 die and you must have at least as many armies in the defending territory per number of die you roll)")
+      } else {
+        null
+      }
     } else {
-      null
+      ("Fiddle Sticks!!", "You can only input numeric values into the forms")
     }
   }
 
-
+  private def checkValidNums(data: AttackData): Boolean = {
+    val stringList: List[String] = List(data.terr, data.otherTerr,
+      data.attackDiceCount, data.defenceDiceCount)
+    val bools = for (i <- 0 to stringList.length - 1) yield {
+      GameData.isValidNum(stringList(i))
+    }
+    bools.foldLeft(true)(_ && _)
+  }
 
   private def newTurn = {
     GameData.newTurn
