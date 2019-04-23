@@ -1,10 +1,10 @@
 @(form: Form[FortifyForm.FortifyData])(implicit request: MessagesRequestHeader)
-@main("fortifyView") {
+    @main("fortifyView") {
 
     <html lang="en">
         <head>
             <meta charset="UTF-8">
-            <title>Review Your Armies</title>
+            <title>Fortify A Territory!</title>
         </head>
         <body>
             <h3>Players</h3>
@@ -31,13 +31,16 @@
 
             <h3>Map</h3>
             <div class="name-input">
-            @helper.form(controllers.routes.TerritoryController.claimTerritories) {
-                <h5> Enter the Territory You Want, type "Random" for a random territory or type "All Random" for every territory to be claimed randomly!</h5>
+            @helper.form(controllers.routes.FortifyController.fortifyTerritory) {
+                <h5> Enter the Territory You Want to Fortify!</h5>
                 @helper.CSRF.formField
-
+                <h5>Your Territory</h5>
                 @helper.inputText(form("terr"))
 
-                <button class="pressButton">CLAIM</button>
+                <h5> The Number of Armies you want to Fortify it With </h5>
+                @helper.inputText(form("numArmies"))
+
+                <button class="pressButton">FORTIFY</button>
 
 
             }</div>

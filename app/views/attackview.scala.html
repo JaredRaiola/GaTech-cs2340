@@ -69,13 +69,14 @@
                     }
                 </div>
 
+                <form id="playGame" action="@controllers.routes.FortifyController.updateFortifyView">
+                    <input class="pressButton" type="submit" value="FORTIFY A TERRITORY" />
+                </form>
+
                 <form id="playGame" action="@controllers.routes.TerritoryController.endTurn">
                     <input class="pressButton" type="submit" value="END TURN" />
                 </form>
 
-                <form id="playGame" action="@controllers.routes.AttackController.fortify.">
-                    <input class="pressButton" type="submit" value="FORTIFY" />
-                </form>
 
                 <table class="map-table">
                     <tbody>
