@@ -137,6 +137,18 @@ footer {
     margin: 10px;
 }
 
+.dice-rolls {
+    text-align: center;
+    margin: 0 auto;
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.1);
+}
+.dice-rolls td {
+    margin: px;
+}
+
 .map-table {
     margin: 0 auto;
     width: 100%;
