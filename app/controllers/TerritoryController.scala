@@ -7,16 +7,7 @@ import play.api.data._
 import play.api.i18n._
 import play.api.mvc._
 
-/**
-  * The classic WidgetController using MessagesAbstractController.
-  *
-  * Instead of MessagesAbstractController, you can use the I18nSupport trait,
-  * which provides implicits that create a Messages instance from a request
-  * using implicit conversion.
-  *
-  * See https://www.playframework.com/documentation/2.6.x/ScalaForms#passing-messagesprovider-to-form-helpers
-  * for details.
-  */
+
 class TerritoryController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
 
   import TerriForm._

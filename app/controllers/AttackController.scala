@@ -12,6 +12,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
 
   import AttackForm._
   import AdditionalArmiesForm._
+  import FortifyForm._
 
   //need to make forms and import them here
   //forms needed: myTerr, otherTerr, attackDiceCount, defenceDiceCount
@@ -187,5 +188,9 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     } else {
       GameData.players(index).incrementArmyCount(newArmies)
     }
+  }
+
+  def fortify:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
+    Ok(views.html.fortifyView(fortifyForm))
   }
 }

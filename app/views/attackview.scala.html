@@ -69,9 +69,14 @@
                     }
                 </div>
 
+                <form id="playGame" action="@controllers.routes.FortifyController.updateFortifyView">
+                    <input class="pressButton" type="submit" value="FORTIFY A TERRITORY" />
+                </form>
+
                 <form id="playGame" action="@controllers.routes.TerritoryController.endTurn">
                     <input class="pressButton" type="submit" value="END TURN" />
                 </form>
+
 
                 <table class="map-table">
                     <tbody>
@@ -84,7 +89,10 @@
                                             if (GameData.terrArray(num).ownerName == GameData.getCurrentPlayer.name) {
                                                 owned = "indeed-owned"
                                             }
-                                                <td class={"cont" + GameData.terrArray(num).cont + " map-unit " + owned}>
+                                                <td onmouseover={"activateNeighbors(" + num + ")"}
+                                                    onmouseout={"deactivateNeighbors(" + num + ")"}
+                                                    onclick={"populateForm(" + num + ")"}
+                                                    class={"not-selectable cont" + GameData.terrArray(num).cont + " map-unit " + owned}>
                                                 <h3>Territory</h3>
                                                 <h3>{num}</h3>
                                                 <p><b>Owner:</b> {GameData.terrArray(num).getOwner}</p>

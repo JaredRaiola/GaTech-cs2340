@@ -25,7 +25,11 @@ GET      /armyPlacement                controllers.TerritoryController.endTurn
 GET      /armyPlacement                controllers.TerritoryController.updatePlacements
 POST     /armyPlacement                controllers.TerritoryController.placeAdditionalArmies
 
-GET      /attackview                controllers.AttackController.updateView
+GET      /attackview                   controllers.AttackController.updateView
 
-GET      /attackview                controllers.AttackController.beginAttackPhase
-POST     /attackview                controllers.AttackController.attack
+GET      /attackview                   controllers.AttackController.beginAttackPhase
+POST     /attackview                   controllers.AttackController.attack
+
+GET      /fortifyView                  controllers.FortifyController.updateFortifyView
+POST     /fortifyView                  controllers.FortifyController.fortifyTerritory
+
