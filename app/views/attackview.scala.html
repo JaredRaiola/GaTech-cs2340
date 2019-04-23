@@ -64,7 +64,10 @@
                                             if (GameData.terrArray(num).ownerName == GameData.getCurrentPlayer.name) {
                                                 owned = "indeed-owned"
                                             }
-                                                <td class={"cont" + GameData.terrArray(num).cont + " map-unit " + owned}>
+                                                <td onmouseover={"activateNeighbors(" + num + ")"}
+                                                    onmouseout={"deactivateNeighbors(" + num + ")"}
+                                                    onclick={"populateForm(" + num + ")"}
+                                                    class={"not-selectable cont" + GameData.terrArray(num).cont + " map-unit " + owned}>
                                                 <h3>Territory</h3>
                                                 <h3>{num}</h3>
                                                 <p><b>Owner:</b> {GameData.terrArray(num).getOwner}</p>

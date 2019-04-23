@@ -9,6 +9,7 @@ body {
     font-family: 'EB Garamond', serif;
     width: 100%;
     background-color: #eaeaea;
+    margin: 0;
 }
 
 h1 {
@@ -138,23 +139,33 @@ footer {
 
 .map-table {
     margin: 0 auto;
+    width: 100%;
+    max-width: 1400px;
+}
+
+.map-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
 }
 
 .map-unit {
-    padding: 10px;
+    padding: 1vw;
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0,0,0,.1);
-    margin: 8px 5px 2px;
+    margin: .45vw .25vw .05vw;
     display: inline-block;
-    width: 120px;
-    height: 120px;
     background-color: white;
     color: gray;
+    border: 5px solid rgba(0, 0, 0, 0);
 
-    transition: all .35s;
-    -webkit-transition: all .35s;
-    -o-transition: all .35s;
-    -moz-transition: all .35s;
+
+    flex: 1 1 0;
+
+    transition: all .35s, margin-right 0s;
+    -webkit-transition: all .35s, margin-right 0s;
+    -o-transition: all .35s, margin-right 0s;
+    -moz-transition: all .35s, margin-right 0s;
 }
 
 .map-unit:hover {
@@ -162,17 +173,28 @@ footer {
     color: white;
     cursor: pointer;
 
-    margin: 2px 5px 8px;
+    margin: 0vw .25vw .5vw;
 }
 
 .map-unit h3 {
     font-weight: bold;
     margin: 0;
+    font-size: 2vw;
 }
 
 .map-unit p {
-    line-height: 20px;
+    line-height: 2vw;
+    font-size: 2vw;
     margin: 0;
+}
+
+@media screen and (min-width: 800px) {
+    .map-unit p {
+        font-size: 16px;
+    }
+    .map-unit h3 {
+        font-size: 16px;
+    }
 }
 
 .map-unit.indeed-owned {
@@ -202,4 +224,15 @@ footer {
 .cont2:hover {
     background-color: white;
     color: black;
+}
+
+.activated {
+    border: 5px solid gray;
+}
+
+.not-selectable {
+    opacity: .4;
+}
+.not-selectable.hover {
+    cursor: default !important;
 }
