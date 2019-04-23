@@ -1,0 +1,70 @@
+@(form: Form[FortifyForm.FortifyData])(implicit request: MessagesRequestHeader)
+@main("fortifyView") {
+
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Review Your Armies</title>
+        </head>
+        <body>
+            <h3>Players</h3>
+            <table class="army-list">
+                <thead>
+                    <tr><th>Player Name</th> <th>Army Count </th>
+                </thead>
+                <tbody>
+                @for(w <- GameData.players) {
+                    @if(GameData.players(GameData.currPlayerIndex).equals(w)) {
+                        <tr bgcolor="#228b22"><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                    }@if(!GameData.players(GameData.currPlayerIndex).equals(w)){
+                        <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                    }
+
+                }
+                </tbody>
+            </table>
+            <br>
+            @* Flash shows updates to a page *@
+            @request.flash.data.map{ case (name, value) =>
+            <div class="message">@name @value</div>
+            }
+
+            <h3>Map</h3>
+            <div class="name-input">
+            @helper.form(controllers.routes.TerritoryController.claimTerritories) {
+                <h5> Enter the Territory You Want, type "Random" for a random territory or type "All Random" for every territory to be claimed randomly!</h5>
+                @helper.CSRF.formField
+
+                @helper.inputText(form("terr"))
+
+                <button class="pressButton">CLAIM</button>
+
+
+            }</div>
+
+            <table class="map-table">
+                <tbody>
+                @for(i <- 0 until 6) {
+                    <tr class="map-row">
+                    @for(j <- 0 until 8) {
+                        @{
+                            var num = i * 8 + j
+                                <td class={"cont" + GameData.terrArray(num).cont + " map-unit"}>
+                                <h3>Territory</h3>
+                                <h3>{num}</h3>
+                                <p><b>Owner:</b> {GameData.terrArray(num).getOwner}</p>
+                                <p><b>Armies:</b> {GameData.terrArray(num).armyCount}</p>
+                                </td>
+                        }
+                    }
+
+                    </tr>
+                }
+
+                </tbody>
+            </table>
+        </body>
+    </html>
+
+
+}

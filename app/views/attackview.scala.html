@@ -73,6 +73,10 @@
                     <input class="pressButton" type="submit" value="END TURN" />
                 </form>
 
+                <form id="playGame" action="@controllers.routes.AttackController.fortify.">
+                    <input class="pressButton" type="submit" value="FORTIFY" />
+                </form>
+
                 <table class="map-table">
                     <tbody>
                             @for(i <- 0 until 6) {
