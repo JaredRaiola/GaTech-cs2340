@@ -21,6 +21,10 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     Ok(views.html.index())
   }
 
+  def checkTerrInRange(terrIndex: Int): Boolean = {
+    terrIndex > -1 && terrIndex < 48
+  }
+
   def checkAttackDiceCount(count: Int, terr: Territory): Boolean = {
     terr.armyCount >= count + 1 && count < 4 && count > 0
   }
@@ -82,71 +86,93 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
   }
 
   def attack:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
-    val errorFunction = { formWithErrors: Form[AttackData] =>
+    val errorFunction: Form[AttackData] => Result = { formWithErrors: Form[AttackData] =>
       BadRequest(views.html.attackview(attackForm))
     }
 
-    val successFunction = { data: AttackData =>
-      //error check
-      //set GameData attackDiceRoll and defenceDiceRoll from the getDiceRollArray
-      //call get AttackLosses to get the loss tuple
-      //apply the losses
-      //other stuff happens
-      val myTerrIndex = data.terr.toInt
-      val otherTerrIndex = data.otherTerr.toInt
+    val successFunction: AttackData => Result = { data: AttackData =>
+      val errorString = errorHandleAttackInput(data)
 
-      if (myTerrIndex > -1 && myTerrIndex < 48){
-        if (otherTerrIndex > -1 && otherTerrIndex < 48) {
-          val myTerr: Territory = GameData.terrArray(myTerrIndex)
-          val otherTerr: Territory = GameData.terrArray(otherTerrIndex)
-          val attackDiceCount = data.attackDiceCount.toInt
-          val defenceDiceCount = data.defenceDiceCount.toInt
-          if (!GameData.doesCurrPlayerOwnTerr(myTerr)) {
-            Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "You cant attack from someone elses territory")
-          } else if (GameData.doesCurrPlayerOwnTerr(otherTerr)) {
-            Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Stop hitting yourself")
-          } else if (!GameData.checkTerritoryAdjacency(myTerrIndex, otherTerrIndex)) {
-            Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "Those territories dont share a border")
-          } else if (attackDiceCount < myTerr.armyCount && attackDiceCount > 0 && attackDiceCount < 4) {
-            if (defenceDiceCount <= myTerr.armyCount && defenceDiceCount > 0 && defenceDiceCount < 3) {
-              //do all the attack stuff
-              val otherOwnerName = otherTerr.ownerName
-              GameData.attackDiceRoll = getDiceRollArray(attackDiceCount)
-              GameData.defenceDiceRoll = getDiceRollArray(defenceDiceCount)
-              val attackLosses = getAttackLosses(attackDiceCount, defenceDiceCount)
-              myTerr.decrementArmy(attackLosses._1)
-              otherTerr.decrementArmy(attackLosses._2)
-              if (otherTerr.armyCount == 0) {
-                otherTerr.setOwner(GameData.getCurrentPlayer.name)
-                val armiesMoving = (attackDiceCount - attackLosses._1)
-                otherTerr.incrementArmy(armiesMoving)
-                myTerr.decrementArmy(armiesMoving)
-                Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name +
-                  " just claimed Territory " + otherTerrIndex + ". " + GameData.getCurrentPlayer.name + " lost "  + attackLosses._1 + " armies. " + otherOwnerName + " lost " +
-                  attackLosses._2 + " armies."))
-              } else {
-                Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name +
-                    " did not claim Territory " + otherTerrIndex + ". " + GameData.getCurrentPlayer.name + " lost "  + attackLosses._1 + " armies. " + otherOwnerName + " lost " +
-                  attackLosses._2 + " armies."))
-              }
-            } else {
-              val output = "You can't roll that many die! (You must roll up to 2 die and you must have at least as many armies in the defending territory per number of die you roll)"
-              Redirect(routes.AttackController.updateView()).flashing("Hey defender!" -> output)
-            }
-          } else {
-            val output = "You can't roll that many die! (You must roll up to 3 die and you must have at least as many armies in the attacking territory per number of die you roll)"
-            Redirect(routes.AttackController.updateView()).flashing("Hey attacker!" -> output)
-          }
-        } else {
-          Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "You can't attack a territory that does't exist!")
-        }
-      } else {
-        Redirect(routes.AttackController.updateView()).flashing("Hey!" -> "You can't attack from a territory that does't exist!")
+      errorString match {
+        case null => attackFunction(data)
+        case _ => Redirect(routes.AttackController.updateView()).flashing(errorString)
       }
     }
 
     val formValidationResult = attackForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
+  }
+
+
+  private def attackFunction(data: AttackData) = {
+    val myTerrIndex = data.terr.toInt
+    val otherTerrIndex = data.otherTerr.toInt
+    val myTerr: Territory = GameData.terrArray(myTerrIndex)
+    val otherTerr: Territory = GameData.terrArray(otherTerrIndex)
+    val attackDiceCount = data.attackDiceCount.toInt
+    val defenceDiceCount = data.defenceDiceCount.toInt
+
+    val otherOwnerName = otherTerr.ownerName
+    GameData.attackDiceRoll = getDiceRollArray(attackDiceCount)
+    GameData.defenceDiceRoll = getDiceRollArray(defenceDiceCount)
+
+    val attackLosses = getAttackLosses(attackDiceCount, defenceDiceCount)
+
+    myTerr.decrementArmy(attackLosses._1)
+    otherTerr.decrementArmy(attackLosses._2)
+    if (otherTerr.armyCount == 0) {
+      otherTerr.setOwner(GameData.getCurrentPlayer.name)
+      val armiesMoving = (attackDiceCount - attackLosses._1)
+      otherTerr.incrementArmy(armiesMoving)
+      myTerr.decrementArmy(armiesMoving)
+      Redirect(routes.AttackController.updateView()).flashing("WoW!" -> (GameData.getCurrentPlayer.name +
+        " just claimed Territory " + otherTerrIndex + ". " + GameData.getCurrentPlayer.name + " lost "  + attackLosses._1 + " armies. " + otherOwnerName + " lost " +
+        attackLosses._2 + " armies."))
+    } else {
+      Redirect(routes.AttackController.updateView()).flashing("Oh No!" -> (GameData.getCurrentPlayer.name +
+        " did not claim Territory " + otherTerrIndex + ". " + GameData.getCurrentPlayer.name + " lost "  + attackLosses._1 + " armies. " + otherOwnerName + " lost " +
+        attackLosses._2 + " armies."))
+    }
+
+  }
+
+
+
+  private def errorHandleAttackInput(data: AttackData): (String, String) = {
+    if (checkValidNums(data)) {
+      val myTerrIndex: Int = data.terr.toInt
+      val otherTerrIndex: Int = data.otherTerr.toInt
+      val attackDiceCount: Int = data.attackDiceCount.toInt
+      val defenceDiceCount: Int = data.defenceDiceCount.toInt
+      if (!(checkTerrInRange(myTerrIndex) && checkTerrInRange(otherTerrIndex))) {
+        ("Hey!", "You can't attack from a territory that does't exist!")
+      } else if (!GameData.doesCurrPlayerOwnTerr(GameData.terrArray(myTerrIndex))) {
+        ("Hey!", "You cant attack from someone elses territory")
+      } else if (GameData.doesCurrPlayerOwnTerr(GameData.terrArray(otherTerrIndex))) {
+        ("Hey!", "Stop hitting yourself")
+      } else if (!GameData.checkTerritoryAdjacency(myTerrIndex, otherTerrIndex)) {
+        ("Hey!", "Those territories dont share a border")
+      } else if (!checkAttackDiceCount(attackDiceCount,
+        GameData.terrArray(myTerrIndex))) {
+        ("Hey attacker!", "You can't roll that many die! (You must roll up to 3 die and you must have at least as many armies in the attacking territory per number of die you roll)")
+      } else if (!checkDefenceDiceCount(defenceDiceCount,
+        GameData.terrArray(otherTerrIndex))) {
+        ("Hey defender!", "You can't roll that many die! (You must roll up to 2 die and you must have at least as many armies in the defending territory per number of die you roll)")
+      } else {
+        null
+      }
+    } else {
+      ("Fiddle Sticks!!", "You can only input numeric values into the forms")
+    }
+  }
+
+  private def checkValidNums(data: AttackData): Boolean = {
+    val stringList: List[String] = List(data.terr, data.otherTerr,
+      data.attackDiceCount, data.defenceDiceCount)
+    val bools = for (i <- 0 to stringList.length - 1) yield {
+      GameData.isValidNum(stringList(i))
+    }
+    bools.foldLeft(true)(_ && _)
   }
 
   private def newTurn = {
