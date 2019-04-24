@@ -32,10 +32,14 @@
             <h3>Map</h3>
             <div class="name-input">
             @helper.form(controllers.routes.FortifyController.fortifyTerritory) {
-                <h5> Enter the Territory You Want to Fortify!</h5>
+                <h5> Fortify a Territory!</h5>
                 @helper.CSRF.formField
-                <h5>Your Territory</h5>
-                @helper.inputText(form("terr"))
+
+                <h5>The Territory supplying the Armies</h5>
+                @helper.inputText(form("terrFrom"))
+
+                <h5>The Territory Receiving the Armies</h5>
+                @helper.inputText(form("terrToFortify"))
 
                 <h5> The Number of Armies you want to Fortify it With </h5>
                 @helper.inputText(form("numArmies"))
@@ -43,7 +47,11 @@
                 <button class="pressButton">FORTIFY</button>
 
 
+
             }</div>
+            <form id="playGame" action="@controllers.routes.TerritoryController.endTurn">
+                <input class="pressButton" type="submit" value="END TURN" />
+            </form>
 
             <table class="map-table">
                 <tbody>
@@ -52,7 +60,14 @@
                     @for(j <- 0 until 8) {
                         @{
                             var num = i * 8 + j
-                                <td class={"cont" + GameData.terrArray(num).cont + " map-unit"}>
+                            var owned = "not-owned"
+                            if (GameData.terrArray(num).ownerName == GameData.getCurrentPlayer.name) {
+                                owned = "indeed-owned"
+                            }
+                                <td onmouseover={"activateNeighbors(" + num + ")"}
+                                onmouseout={"deactivateNeighbors(" + num + ")"}
+                                onclick={"populateForm(" + num + ")"}
+                                class={"not-selectable cont" + GameData.terrArray(num).cont + " map-unit " + owned}>
                                 <h3>Territory</h3>
                                 <h3>{num}</h3>
                                 <p><b>Owner:</b> {GameData.terrArray(num).getOwner}</p>
