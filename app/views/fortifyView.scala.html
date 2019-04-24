@@ -1,0 +1,88 @@
+@(form: Form[FortifyForm.FortifyData])(implicit request: MessagesRequestHeader)
+    @main("fortifyView") {
+
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Fortify A Territory!</title>
+        </head>
+        <body>
+            <h3>Players</h3>
+            <table class="army-list">
+                <thead>
+                    <tr><th>Player Name</th> <th>Army Count </th>
+                </thead>
+                <tbody>
+                @for(w <- GameData.players) {
+                    @if(GameData.players(GameData.currPlayerIndex).equals(w)) {
+                        <tr bgcolor="#228b22"><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                    }@if(!GameData.players(GameData.currPlayerIndex).equals(w)){
+                        <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                    }
+
+                }
+                </tbody>
+            </table>
+            <br>
+            @* Flash shows updates to a page *@
+            @request.flash.data.map{ case (name, value) =>
+            <div class="message">@name @value</div>
+            }
+
+            <h3>Map</h3>
+            <div class="name-input">
+            @helper.form(controllers.routes.FortifyController.fortifyTerritory) {
+                <h5> Fortify a Territory!</h5>
+                @helper.CSRF.formField
+
+                <h5>The Territory supplying the Armies</h5>
+                @helper.inputText(form("terrFrom"))
+
+                <h5>The Territory Receiving the Armies</h5>
+                @helper.inputText(form("terrToFortify"))
+
+                <h5> The Number of Armies you want to Fortify it With </h5>
+                @helper.inputText(form("numArmies"))
+
+                <button class="pressButton">FORTIFY</button>
+
+
+
+            }</div>
+            <form id="playGame" action="@controllers.routes.TerritoryController.endTurn">
+                <input class="pressButton" type="submit" value="END TURN" />
+            </form>
+
+            <table class="map-table">
+                <tbody>
+                @for(i <- 0 until 6) {
+                    <tr class="map-row">
+                    @for(j <- 0 until 8) {
+                        @{
+                            var num = i * 8 + j
+                            var owned = "not-owned"
+                            if (GameData.terrArray(num).ownerName == GameData.getCurrentPlayer.name) {
+                                owned = "indeed-owned"
+                            }
+                                <td onmouseover={"activateNeighbors(" + num + ")"}
+                                onmouseout={"deactivateNeighbors(" + num + ")"}
+                                onclick={"populateForm(" + num + ")"}
+                                class={"not-selectable cont" + GameData.terrArray(num).cont + " map-unit " + owned}>
+                                <h3>Territory</h3>
+                                <h3>{num}</h3>
+                                <p><b>Owner:</b> {GameData.terrArray(num).getOwner}</p>
+                                <p><b>Armies:</b> {GameData.terrArray(num).armyCount}</p>
+                                </td>
+                        }
+                    }
+
+                    </tr>
+                }
+
+                </tbody>
+            </table>
+        </body>
+    </html>
+
+
+}

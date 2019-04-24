@@ -45,7 +45,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
 
     val successFunction = { data: Data =>
       // This is the good case, where the form was successfully parsed as a Data object.
-      val player = new Player(data.name, 0, 0)
+      val player = new Player(data.name)
       if (GameData.players.nonEmpty) {
         if (GameData.players.contains(player)) {
           Redirect(routes.PlayerFormController.listPlayers()).flashing("Warning" -> "Please enter a unique name!")
