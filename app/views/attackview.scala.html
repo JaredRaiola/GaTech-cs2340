@@ -8,74 +8,109 @@
             </head>
             <body>
                 <h1>ATTACK!!!</h1>
-                <h3>Players</h3>
 
-                <table class = "dice-rolls" cellspacing="1">
-                    <tbody>
-                       <td>@GameData.getAttackRolls</td>
-                    </tbody>
-                    <thead>
-                    <th>Attack Dice Rolls</th>
-                    </thead>
-                </table>
 
-                <table class = "dice-rolls" cellspacing="1">
-                    <tbody>
-                        <td>@GameData.getDefenceRolls</td>
-                    </tbody>
-                    <thead>
-                        <th>Attack Dice Rolls</th>
-                    </thead>
-                </table>
+                <div class="flex-container">
+                    <div class="flex-card">
+                        <h3>Players</h3>
+                        <table class="army-list">
+                            <thead>
+                                <tr><th>Player Name</th> <th>Army Count </th>
+                            </thead>
+                            <tbody>
+                            @for(w <- GameData.players) {
+                                @if(GameData.players(GameData.currPlayerIndex).equals(w)) {
+                                    <tr bgcolor="#228b22"><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                                }@if(!GameData.players(GameData.currPlayerIndex).equals(w)){
+                                    <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                                }
 
-                <table class="army-list">
-                    <thead>
-                        <tr><th>Player Name</th> <th>Army Count </th>
-                    </thead>
-                    <tbody>
-                    @for(w <- GameData.players) {
-                        @if(GameData.players(GameData.currPlayerIndex).equals(w)) {
-                            <tr bgcolor="#228b22"><td>@w.name</td> <td>@w.armyBinCount</td></tr>
-                        }@if(!GameData.players(GameData.currPlayerIndex).equals(w)){
-                            <tr><td>@w.name</td> <td>@w.armyBinCount</td></tr>
+                            }
+                            </tbody>
+                        </table>
+                        <div class= "dice-rolls">
+                            <h3>Attack Dice Rolls</h3>
+                            @for(a <- GameData.attackDiceRoll) {
+                                @{
+                                    var numString = a match {
+                                        case 1 => "-one"
+                                        case 2 => "-two"
+                                        case 3 => "-three"
+                                        case 4 => "-four"
+                                        case 5 => "-five"
+                                        case 6 => "-six"
+                                        case _ => " not-rolled"
+                                    }
+                                        <i class={"fas fa-dice" + numString}></i>
+                                }
+                            }
+                        </div>
+
+                        <div class= "dice-rolls">
+                            <h3>Defense Dice Rolls</h3>
+                            @for(a <- GameData.defenceDiceRoll) {
+                                @{
+                                    var numString = a match {
+                                        case 1 => "-one"
+                                        case 2 => "-two"
+                                        case 3 => "-three"
+                                        case 4 => "-four"
+                                        case 5 => "-five"
+                                        case 6 => "-six"
+                                        case _ => " not-rolled"
+                                    }
+                                        <i class={"fas fa-dice" + numString}></i>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="flex-card">
+                        <h3>Map</h3>
+                        <div class="name-input">
+
+                        @helper.form(controllers.routes.AttackController.attack) {
+                            <h5> Enter The territory you want attacked, the Territory you are attacking with,
+                                the number of armies, and the number of armies defending the territory </h5>
+                            @helper.CSRF.formField
+                            <p>Your Territory</p>
+                            @helper.inputText(form("terr"))
+                            <p>Other Player's Territory</p>
+                            @helper.inputText(form("otherTerr"))
+                            <p>Attack Dice</p>
+                            @helper.inputText(form("attackDiceCount"))
+                            <p>Defense Dice</p>
+                            @helper.inputText(form("defenceDiceCount"))
+
+                            <button class="pressButton">ATTACK</button>
                         }
+                        </div>
 
-                    }
-                    </tbody>
-                </table>
+                        <div class="flex-card">
+                            <form id="playGame" action="@controllers.routes.FortifyController.updateFortifyView">
+                                <input class="pressButton" type="submit" value="FORTIFY A TERRITORY" />
+                            </form>
+
+                            <form id="playGame" action="@controllers.routes.TerritoryController.endTurn">
+                                <input class="pressButton" type="submit" value="END TURN" />
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
                 <br>
                 @* Flash shows updates to a page *@
                 @request.flash.data.map{ case (name, value) =>
                 <div class="message">@name @value</div>
                 }
 
-                <h3>Map</h3>
-                <div class="name-input">
 
-                    @helper.form(controllers.routes.AttackController.attack) {
-                        <h5> Enter The territory you want attacked, the Territory you are attacking with,
-                        the number of armies, and the number of armies defending the territory </h5>
-                        @helper.CSRF.formField
-                        <p>Your Territory</p>
-                        @helper.inputText(form("terr"))
-                        <p>Other Player's Territory</p>
-                        @helper.inputText(form("otherTerr"))
-                        <p>Attack Dice</p>
-                        @helper.inputText(form("attackDiceCount"))
-                        <p>Defense Dice</p>
-                        @helper.inputText(form("defenceDiceCount"))
 
-                        <button class="pressButton">ATTACK</button>
-                    }
-                </div>
-
-                <form id="playGame" action="@controllers.routes.FortifyController.updateFortifyView">
-                    <input class="pressButton" type="submit" value="FORTIFY A TERRITORY" />
-                </form>
-
-                <form id="playGame" action="@controllers.routes.TerritoryController.endTurn">
-                    <input class="pressButton" type="submit" value="END TURN" />
-                </form>
 
 
                 <table class="map-table">
@@ -95,8 +130,10 @@
                                                     class={"not-selectable cont" + GameData.terrArray(num).cont + " map-unit " + owned}>
                                                 <h3>Territory</h3>
                                                 <h3>{num}</h3>
-                                                <p><b>Owner:</b> {GameData.terrArray(num).getOwner}</p>
-                                                <p><b>Armies:</b> {GameData.terrArray(num).armyCount}</p>
+                                                <p><span><i class="fab fa-font-awesome-flag"></i></span>
+                                                <span>{GameData.terrArray(num).getOwner}</span></p>
+                                                <div class="break"></div>
+                                                <p><i class="fas fa-chess-pawn"></i> {GameData.terrArray(num).armyCount}</p>
                                                 </td>
                                         }
                                     }
