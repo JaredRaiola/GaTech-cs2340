@@ -33,7 +33,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       GameData.terrArray(terrIndex).incrementArmy(1)
       GameData.terrArray(terrIndex).setOwner(GameData.players(GameData.currPlayerIndex).name)
       GameData.players(GameData.currPlayerIndex).decrementArmyCount(1)
-      newTurn
+      newSetUpTurn
     }
   }
   private def assignNewArmies = { //why is this a thing
@@ -49,10 +49,14 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     armiesOnTurn = 0
   }
 
+
+  def newSetUpTurn:Unit = {
+    GameData.newTurn
+    armiesOnTurn = 0
+  }
+
   private def findNextPlayer(newTurns: Int, playerIndex: Int): Int = {
-    if (GameData.players(playerIndex).armyBinCount != 0) { //this doesnt work bc they get new ones every turn
-      0
-    } else if (GameData.calculateTerritoriesOwned(playerIndex) == 0) {
+    if (GameData.calculateTerritoriesOwned(playerIndex) == 0) {
       GameData.setInactive(playerIndex)
       findNextPlayer(newTurns + 1, getNextPlayerIndex(playerIndex))
     } else {
@@ -104,7 +108,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
           GameData.terrArray(terrIndex).incrementArmy(1)
           GameData.terrArray(terrIndex).setOwner(GameData.players(GameData.currPlayerIndex).name)
           GameData.players(GameData.currPlayerIndex).decrementArmyCount(1)
-          newTurn
+          newSetUpTurn
         }
         //now check turncounter
         if (GameData.turnCounter != GameData.terrArray.length && terrIndex != -1) {
@@ -128,8 +132,16 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     formValidationResult.fold(errorFunction, successFunction)
   }
 
+
+
   def endTurn:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
       newTurn
+      assignNewArmies
+    Ok(views.html.armyPlacement(additionalArmiesForm))
+  }
+
+  def endSetUpTurn:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
+      newSetUpTurn
       assignNewArmies
     Ok(views.html.armyPlacement(additionalArmiesForm))
   }
