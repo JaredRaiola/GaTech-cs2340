@@ -20,10 +20,6 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
       false
   }
 
-  private def isContinuous(terrFrom: Int, terrToFortify: Int): Boolean = {
-    true
-  }
-
   def updateFortifyView:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     Ok(views.html.fortifyView(fortifyForm))
   }
