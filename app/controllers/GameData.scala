@@ -3,7 +3,8 @@ package controllers
 import models.{Player, Territory}
 
 object GameData {
-  var players: scala.collection.mutable.ArrayBuffer[Player] = scala.collection.mutable.ArrayBuffer(new Player("", 0, 0))
+  var players: scala.collection.mutable.ArrayBuffer[Player] = scala.collection.mutable.ArrayBuffer(new Player(""))
+
   var currPlayerIndex: Int = 0
 
   var randomNumberMaker: scala.util.Random = new scala.util.Random()
@@ -27,6 +28,21 @@ object GameData {
   def isInRange(str: String): Boolean = isValidNum(str) && str.toInt <= 47 && str.toInt >= 0
 
   def startStateIncomplete: Boolean = terrArray.isEmpty || players.size < 3
+
+  def checkForWin(playerIndex: Int): Boolean = {
+    val sumOfActive = for (player <- players) yield {
+      if (player.active) 1 else 0
+    }
+    val sum = sumOfActive.foldLeft(0)(_ + _)
+    sum == 0 && players(playerIndex).active
+  }
+
+
+
+
+  def setInactive(playerIndex: Int): Unit = {
+    players(playerIndex).active = false
+  }
 
   def getAttackRolls = {
     var rolls = ""
@@ -77,10 +93,10 @@ object GameData {
     terr.getOwner == GameData.players(GameData.currPlayerIndex).name
   }
 
-  def calculateTerritoriesOwned(index: Int): Int = {
+  def calculateTerritoriesOwned(playerIndex: Int): Int = {
     var territoriesOwned = 0
     for (i <- terrArray.indices) {
-      if (terrArray(i).getOwner == players(index).name) {
+      if (terrArray(i).getOwner == players(playerIndex).name) {
         territoriesOwned += 1
       }
     }

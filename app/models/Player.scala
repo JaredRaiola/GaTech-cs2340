@@ -2,9 +2,7 @@ package models
 
 import controllers.GameData
 
-class Player(val name: String, var armyBinCount: Int = 0, var turnMode: Int = 0, var territoryCount: Int = 0 ) {
-  //turn mode 0 is not their turn, 1 is place armies, 2 is attack, 3 is move, then 0
-  //  def updateBinCount   depending on how many territories they own
+class Player(val name: String, var armyBinCount: Int = 0, var active: Boolean = true, var territoryCount: Int = 0 ) {
 
   final override def equals(other: Any):Boolean = other match {
     case that: Player => name == that.name
