@@ -42,11 +42,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
 
   def newTurn:Unit = {
     GameData.newTurn
-    armiesOnTurn = 0
-  }
-
-  def newGameTurn:Unit = {
-    GameData.newTurn
     val newTurns = findNextPlayer(0, GameData.currPlayerIndex)
     for (i <- 0 to newTurns) {
       GameData.newTurn
@@ -55,7 +50,9 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   private def findNextPlayer(newTurns: Int, playerIndex: Int): Int = {
-    if (GameData.calculateTerritoriesOwned(playerIndex) == 0) {
+    if (GameData.players(playerIndex).armyBinCount != 0) {
+      0
+    } else if (GameData.calculateTerritoriesOwned(playerIndex) == 0) {
       GameData.setInactive(playerIndex)
       findNextPlayer(newTurns + 1, getNextPlayerIndex(playerIndex))
     } else {
@@ -133,7 +130,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
 
   def endTurn:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     if (GameData.getCurrentPlayer.armyBinCount == 0) {
-      newGameTurn
+      newTurn
       assignNewArmies
     }
     Ok(views.html.armyPlacement(additionalArmiesForm))
