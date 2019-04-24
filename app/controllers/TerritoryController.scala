@@ -50,7 +50,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   private def findNextPlayer(newTurns: Int, playerIndex: Int): Int = {
-    if (GameData.players(playerIndex).armyBinCount != 0) {
+    if (GameData.players(playerIndex).armyBinCount != 0) { //this doesnt work bc they get new ones every turn
       0
     } else if (GameData.calculateTerritoriesOwned(playerIndex) == 0) {
       GameData.setInactive(playerIndex)
@@ -129,10 +129,8 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   }
 
   def endTurn:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
-    if (GameData.getCurrentPlayer.armyBinCount == 0) {
       newTurn
       assignNewArmies
-    }
     Ok(views.html.armyPlacement(additionalArmiesForm))
   }
 
