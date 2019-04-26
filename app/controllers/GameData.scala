@@ -82,7 +82,6 @@ object GameData {
     }
   }
 
-
   def checkTerritoryAdjacency(terr1Index: Int, terr2Index: Int): Boolean = {
     //need to make the territory map graph
     val difference = terr1Index - terr2Index

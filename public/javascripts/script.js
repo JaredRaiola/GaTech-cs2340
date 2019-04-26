@@ -10,11 +10,10 @@ function updateLastFocus() {
     if (document.activeElement.tagName == "INPUT") {
         lastFocus = document.activeElement;
     }
-    if (lastFocus === "undefined") {
-
-    } else {
+    if (lastFocus !== undefined){
         var territoryList = document.getElementsByClassName("map-unit");
-        if (lastFocus.getAttribute('name') == "terr" || lastFocus.getAttribute('name') == "otherTerr") {
+        if (lastFocus.getAttribute('name') == "terr" || lastFocus.getAttribute('name') == "otherTerr" ||
+            lastFocus.getAttribute('name') == "terrFrom" || lastFocus.getAttribute('name') == "terrToFortify") {
             for (var i = 0; i < territoryList.length; i++) {
                 territoryList[i].classList.remove("not-selectable");
             }
@@ -63,11 +62,13 @@ function populateForm(index) {
     var formList = document.getElementsByTagName("INPUT");
 
     for (var i = 0; i < formList.length; i++) {
-        if (formList[i].getAttribute('name') == "terr" && formList[i] == lastFocus) {
-            formList[i].value = index;
-        } else if (formList[i].getAttribute('name') == "otherTerr" &&
-                    formList[i] == lastFocus) {
-            formList[i].value = index;
+        if (formList[i] == lastFocus) {
+            if (formList[i].getAttribute('name') == "terr" ||
+                formList[i].getAttribute('name') == "otherTerr" ||
+                formList[i].getAttribute('name') == "terrFrom" ||
+                formList[i].getAttribute('name') == "terrToFortify") {
+                formList[i].value = index;
+            }
         }
     }
 
