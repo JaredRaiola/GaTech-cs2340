@@ -120,7 +120,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
 
   def endTurn:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val currentPlayerIndex = GameData.currPlayerIndex
-    val nextPlayerIndex = GameData.getNextPlayerIndex(currentPlayerIndex)
+    val nextPlayerIndex = getNextValidPlayerIndex(currentPlayerIndex)
     if (nextPlayerIndex == currentPlayerIndex) {
       //they are the winner
       Ok(views.html.armyPlacement(additionalArmiesForm))
