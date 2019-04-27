@@ -110,7 +110,7 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
         ("Hey!", "You don't own the territory supplying the armies!")
       } else if (!GameData.doesCurrPlayerOwnTerr(GameData.terrArray(terrToFortifyIndex))) {
         ("Hey!", "You don't own the territory you're trying to fortify!")
-      } else if (!isContinuous(terrFromIndex, terrToFortifyIndex)) {
+      } else if (!GameData.checkTerritoryAdjacency(terrFromIndex, terrToFortifyIndex)) {
         ("Hey!", "Those territories aren't continuous!")
       } else if (numArmies.toInt <= 0 || numArmies >= GameData.terrArray(terrFromIndex).armyCount) {
         ("Hey!", "You can't fortify with that number of armies!")

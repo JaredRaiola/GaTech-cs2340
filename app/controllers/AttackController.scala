@@ -181,9 +181,13 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
   }
 
   private def assignNewArmies = {
-    var index = GameData.currPlayerIndex
-    var newArmies = GameData.calculateNewArmies(index)
-    GameData.players(index).incrementArmyCount(newArmies)
+    val index = GameData.currPlayerIndex
+    val newArmies = GameData.calculateNewArmies(index)
+    if (GameData.calculateTerritoriesOwned(index) == 0) {
+      GameData.setInactive(index)
+    } else {
+      GameData.players(index).incrementArmyCount(newArmies)
+    }
   }
 
   def fortify:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>

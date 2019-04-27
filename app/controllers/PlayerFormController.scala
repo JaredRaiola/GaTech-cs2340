@@ -34,6 +34,20 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
     Ok(views.html.listPlayers(GameData.players, form, postUrl))
   }
 
+  def preSetPlayers = Action { implicit request: MessagesRequest[AnyContent] =>
+    GameData.players.clear
+    GameData.players.append(new Player("Jacinto"))
+    GameData.players.append(new Player("Jack Cinto"))
+    GameData.players.append(new Player("Ha Seen Toe"))
+    GameData.players.append(new Player("Ja sinto"))
+    GameData.players.append(new Player("on Ja (cinto)"))
+    GameData.players.append(new Player("Jared"))
+    for (w <- GameData.players) {
+      w.setArmyCount(35 - (5 * (GameData.players.length - 3)))
+    }
+    Redirect(routes.PlayerFormController.listPlayers()).flashing("Alrighty" -> "The squad is ready")
+  }
+
   // This will be the action that handles our form post
   def createPlayer:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[Data] =>
@@ -45,7 +59,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
 
     val successFunction = { data: Data =>
       // This is the good case, where the form was successfully parsed as a Data object.
-      val player = new Player(data.name, 0, 0)
+      val player = new Player(data.name)
       if (GameData.players.nonEmpty) {
         if (GameData.players.contains(player)) {
           Redirect(routes.PlayerFormController.listPlayers()).flashing("Warning" -> "Please enter a unique name!")
