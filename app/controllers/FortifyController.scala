@@ -7,6 +7,8 @@ import models.Territory
 import play.api.data._
 import play.api.i18n._
 import play.api.mvc._
+import scala.collection.mutable.Queue
+import scala.collection.immutable.HashSet
 
 class FortifyController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
 
@@ -21,7 +23,49 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
   }
 
   private def isContinuous(terrFrom: Int, terrToFortify: Int): Boolean = {
-    true
+    var toReturn = false
+    var terrQueue = new Queue[Int]
+    var visitedSet = new HashSet[Int]
+    for (x <- GameData.terrArray(terrFrom).getAdjList()) {
+      if (GameData.terrArray(x).ownerName == GameData.getCurrentPlayer.name) {
+        terrQueue += x
+      }
+    }
+    visitedSet += terrFrom
+//    println("terrQueue: ")
+//    for (x <- terrQueue) {
+//      println(x)
+//    }
+//    println("visitedSet: " + visitedSet)
+//    for (x <- visitedSet) {
+//      println(x)
+//    }
+    println("curr players terrCount: " + GameData.calculateTerritoriesOwned(GameData.currPlayerIndex))
+    while (!terrQueue.isEmpty && visitedSet.size < GameData.calculateTerritoriesOwned(GameData.currPlayerIndex)) {
+      var currentTerr = terrQueue.dequeue()
+      println(currentTerr)
+      println(terrToFortify)
+      if (currentTerr == terrToFortify) {
+        toReturn = true
+      }
+      else if (!visitedSet.contains(currentTerr)) {
+        visitedSet += currentTerr
+        for (x <- GameData.terrArray(currentTerr).getAdjList()) {
+          if (GameData.terrArray(x).ownerName == GameData.getCurrentPlayer.name) {
+            terrQueue += x
+          }
+        }
+      }
+      println("terrQueue: ")
+      for (x <- terrQueue) {
+        println(x)
+      }
+      println("visitedSet: " + visitedSet)
+      for (x <- visitedSet) {
+        println(x)
+      }
+    }
+    toReturn
   }
 
   def updateFortifyView:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
@@ -52,9 +96,9 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
     val numArmies = data.numArmies.toInt
     GameData.terrArray(terrFromIndex).decrementArmy(numArmies)
     GameData.terrArray(terrToFortifyIndex).incrementArmy(numArmies)
-    Redirect(routes.FortifyController.updateFortifyView()).flashing("Nice!" -> ("Territory " + data.terrToFortify
-      + " now has " + GameData.terrArray(terrToFortifyIndex).armyCount + " armies, while Territory " + data.terrFrom
-      + " now has " + GameData.terrArray(terrFromIndex).armyCount + " armies."))
+    Redirect(routes.TerritoryController.updatePlacements()).flashing(GameData.getCurrentPlayer.name + " has moved " + numArmies + " armies!" ->
+      ("Territory " + data.terrToFortify + " now has " + GameData.terrArray(terrToFortifyIndex).armyCount
+        + " armies, while Territory " + data.terrFrom + " now has " + GameData.terrArray(terrFromIndex).armyCount + " armies."))
   }
 
   private def errorHandleFortifyInput(data: FortifyData): (String, String) = {
@@ -74,7 +118,7 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
         null
       }
     } else {
-      ("Cmon!", "You gotta enter valid numbers to fortify!")
+      ("Hey!", "You gotta enter valid numbers to fortify!")
     }
   }
 }
