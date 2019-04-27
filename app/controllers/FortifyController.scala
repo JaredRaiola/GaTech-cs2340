@@ -23,6 +23,7 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
   }
 
   private def isContinuous(terrFrom: Int, terrToFortify: Int): Boolean = {
+    var counter = 0
     var toReturn = false
     var terrQueue = new Queue[Int]
     var visitedSet = new HashSet[Int]
@@ -32,19 +33,8 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
       }
     }
     visitedSet += terrFrom
-//    println("terrQueue: ")
-//    for (x <- terrQueue) {
-//      println(x)
-//    }
-//    println("visitedSet: " + visitedSet)
-//    for (x <- visitedSet) {
-//      println(x)
-//    }
-    println("curr players terrCount: " + GameData.calculateTerritoriesOwned(GameData.currPlayerIndex))
-    while (!terrQueue.isEmpty && visitedSet.size < GameData.calculateTerritoriesOwned(GameData.currPlayerIndex)) {
+    while(!terrQueue.isEmpty && visitedSet.size < GameData.calculateTerritoriesOwned(GameData.currPlayerIndex)) {
       var currentTerr = terrQueue.dequeue()
-      println(currentTerr)
-      println(terrToFortify)
       if (currentTerr == terrToFortify) {
         toReturn = true
       }
@@ -56,14 +46,7 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
           }
         }
       }
-      println("terrQueue: ")
-      for (x <- terrQueue) {
-        println(x)
-      }
-      println("visitedSet: " + visitedSet)
-      for (x <- visitedSet) {
-        println(x)
-      }
+      counter += 1
     }
     toReturn
   }
@@ -110,7 +93,7 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
         ("Hey!", "You don't own the territory supplying the armies!")
       } else if (!GameData.doesCurrPlayerOwnTerr(GameData.terrArray(terrToFortifyIndex))) {
         ("Hey!", "You don't own the territory you're trying to fortify!")
-      } else if (!GameData.checkTerritoryAdjacency(terrFromIndex, terrToFortifyIndex)) {
+      } else if (!isContinuous(terrFromIndex, terrToFortifyIndex)) {
         ("Hey!", "Those territories aren't continuous!")
       } else if (numArmies.toInt <= 0 || numArmies >= GameData.terrArray(terrFromIndex).armyCount) {
         ("Hey!", "You can't fortify with that number of armies!")

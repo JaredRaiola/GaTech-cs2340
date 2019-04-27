@@ -1,10 +1,16 @@
 package models
 
-class Territory(val name: String, var ownerName: String = "", var armyCount: Int = 0, val cont: Int = 0) {
+class Territory(val name: String, var ownerName: String = "", var armyCount: Int = 0, val cont: Int = 0, val index: Int) {
 
   def getAdjList(): List[Int] = {
-    val terrIndex: Int = name.charAt(name.length() - 1).toInt - 48
-    val preFilteredList: List[Int] = List(terrIndex + 1, terrIndex - 1, terrIndex + 8, terrIndex - 8)
+    var preFilteredList: List[Int] =
+    if (index % 8 == 0) {
+      List(index + 1, index + 8, index - 8)
+    } else if ((index % 7 == 1 && index != 1) || index == 7) {
+      List(index - 1, index + 8, index - 8)
+    } else {
+      List(index + 1, index - 1,  index + 8, index - 8)
+    }
     preFilteredList.filter((x: Int) => x >= 0 && x <= 47)
   }
 
