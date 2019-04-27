@@ -17,7 +17,7 @@ object GameData {
     if (i >= 0 && i <= 15) continent = 0
     if (i >= 16 && i <= 31) continent = 1
     if (i >= 32 && i <= 47) continent = 2
-    terrArray(i) = new Territory("TerritoryName" + i, "", 0, continent)
+    terrArray(i) = new Territory("TerritoryName" + i, "", 0, continent, i)
   }
 
   var attackDiceRoll: Array[Int] = Array(0,0,0)
