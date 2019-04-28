@@ -14,8 +14,6 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
   import AdditionalArmiesForm._
   import AttackForm._
 
-  //private var armiesOnTurn = 0
-
 
   private def territoryIsOccupied(terrIndex: Int): Boolean = GameData.terrArray(terrIndex).ownerName != ""
   private def isArmyAmountInvalid(numArmies: Int): Boolean = numArmies <= 0 || numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount
@@ -36,13 +34,12 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
       newTurn
     }
   }
-  private def assignNewArmies = { //why is this a thing
+  private def assignNewArmies = {
     GameData.assignNewArmies
   }
 
   def newTurn:Unit = {
     GameData.newTurn
-    ////armiesOnTurn = 0
   }
 
   private def getNextValidPlayerIndex(playerIndex: Int): Int = {
