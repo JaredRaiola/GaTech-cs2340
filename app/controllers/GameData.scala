@@ -37,9 +37,6 @@ object GameData {
     sum == 0 && players(playerIndex).active
   }
 
-
-
-
   def setInactive(playerIndex: Int): Unit = {
     players(playerIndex).active = false
   }
@@ -73,6 +70,10 @@ object GameData {
     players(currPlayerIndex)
   }
 
+  def setCurrentPlayerIndex(index: Int): Unit = {
+    currPlayerIndex = index
+  }
+
   def newTurn:Unit = {
     turnCounter += 1
     if (currPlayerIndex == players.length - 1) {
@@ -81,6 +82,8 @@ object GameData {
       currPlayerIndex += 1
     }
   }
+
+  def getNextPlayerIndex(currPlayerIndex: Int): Int = (currPlayerIndex + 1) % players.length
 
   def checkTerritoryAdjacency(terr1Index: Int, terr2Index: Int): Boolean = {
     //need to make the territory map graph

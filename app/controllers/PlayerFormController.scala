@@ -39,9 +39,9 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
     GameData.players.append(new Player("Jacinto"))
     GameData.players.append(new Player("Jack Cinto"))
     GameData.players.append(new Player("Ha Seen Toe"))
-    GameData.players.append(new Player("Ja sinto"))
-    GameData.players.append(new Player("on Ja (cinto)"))
-    GameData.players.append(new Player("Jared"))
+    GameData.players.append(new Player("Jah sinto"))
+    GameData.players.append(new Player("on Jah (cinto)"))
+    GameData.players.append(new Player("J a c i n t o"))
     for (w <- GameData.players) {
       w.setArmyCount(35 - (5 * (GameData.players.length - 3)))
     }
