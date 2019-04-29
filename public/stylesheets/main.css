@@ -319,6 +319,12 @@ footer {
     margin: 0;
 }
 
+
+.map-unit i {
+    margin-right: 1.5vw;
+    width: 1vw;
+}
+
 @media screen and (min-width: 800px) {
     .map-unit p {
         font-size: 16px;
@@ -326,6 +332,10 @@ footer {
     }
     .map-unit h3 {
         font-size: 16px;
+    }
+    .map-unit i {
+        margin-right: 12px;
+        width: 8px;
     }
 }
 
@@ -342,10 +352,6 @@ footer {
 .map-unit p {
     display: flex;
     justify-content: left;
-}
-.map-unit i {
-    margin-right: 1vw;
-    width: .5vw;
 }
 
 .map-unit .break {
