@@ -135,48 +135,39 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     Ok(views.html.armyPlacement(additionalArmiesForm))
   }
 
-  def placeAdditionalArmies: Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
+
+  def placeAdditionalArmies:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     val errorFunction = { formWithErrors: Form[AdditionalArmiesData] =>
+      // This is the bad case, where the form had validation errors.
+      // Let's show the user the form again, with the errors highlighted.
+      // Note how we pass the form with errors to the template.
       BadRequest(views.html.armyPlacement(additionalArmiesForm))
     }
-    val successFunction: AdditionalArmiesData => Result = {
-      data: AdditionalArmiesData =>
-
-      val errors = placeAdditionalArmiesErrors(data)
-      errors match {
-        case None => additionalArmiesSuccess(data)
-        case Some(tuple: (String, String)) => additionalArmiesDisplayError(errors.get)
+    val successFunction = { data: AdditionalArmiesData =>
+      // This is the good case, where the form was successfully parsed as a Data object.
+      var terrIndex = -1
+      if (GameData.startStateIncomplete) {
+        Redirect(routes.TerritoryController.updatePlacements).flashing("Huh" -> "Something went wrong.")
+      } else if (!GameData.isInRange(data.terr)) {
+        Redirect(routes.TerritoryController.updatePlacements).flashing("Warning: " -> "This is not a valid territory value.")
+      } else if (GameData.isInRange(data.terr) & !GameData.doesCurrPlayerOwnTerr(GameData.terrArray(data.terr.toInt))) {
+        Redirect(routes.TerritoryController.updatePlacements).flashing("You can't do that! " -> "You don't own that territory.")
+      } else {
+        terrIndex = data.terr.toInt
+        if(isArmyAmountInvalid(data.numArmies.toInt)) {
+          Redirect(routes.TerritoryController.updatePlacements).flashing("You and what army? " -> "That's more armies than you have.")
+        } else {
+          //success
+          GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
+          GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
+          //armiesOnTurn = armiesOnTurn + data.numArmies
+          Ok(views.html.armyPlacement(additionalArmiesForm))
+        }
       }
     }
+
     val formValidationResult = additionalArmiesForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
   }
-
-
-
-  private def additionalArmiesDisplayError(errorMessage: (String, String)): Result = {
-    Redirect(routes.TerritoryController.updatePlacements).flashing(errorMessage)
-  }
-
-  private def additionalArmiesSuccess(data: AdditionalArmiesData): Result = {
-    GameData.terrArray(data.terr.toInt).incrementArmy(data.numArmies)
-    GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
-    Redirect(routes.TerritoryController.updatePlacements()).flashing("Reinforced" -> "")
-  }
-
-  private def placeAdditionalArmiesErrors(data: AdditionalArmiesData): Option[(String, String)] = {
-    if (GameData.startStateIncomplete) {
-      Some(("Huh", "Something went wrong."))
-    } else if (!GameData.isInRange(data.terr)) {
-      Some(("Warning: ", "This is not a valid territory value."))
-    } else if (!GameData.doesCurrPlayerOwnTerr(GameData.terrArray(data.terr.toInt))) {
-      Some(("You can't do that! ", "You don't own that territory."))
-    } else if (isArmyAmountInvalid(data.numArmies.toInt)) {
-      Some(("You and what army? ", "That's more armies than you have."))
-    } else {
-      None
-    }
-  }
-
 
 }
