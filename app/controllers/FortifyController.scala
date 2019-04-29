@@ -7,6 +7,8 @@ import models.Territory
 import play.api.data._
 import play.api.i18n._
 import play.api.mvc._
+import scala.collection.mutable.Queue
+import scala.collection.immutable.HashSet
 
 class FortifyController @Inject()(cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
 
@@ -18,6 +20,35 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
       true
     else
       false
+  }
+
+  private def isContinuous(terrFrom: Int, terrToFortify: Int): Boolean = {
+    var counter = 0
+    var toReturn = false
+    var terrQueue = new Queue[Int]
+    var visitedSet = new HashSet[Int]
+    for (x <- GameData.terrArray(terrFrom).getAdjList()) {
+      if (GameData.terrArray(x).ownerName == GameData.getCurrentPlayer.name) {
+        terrQueue += x
+      }
+    }
+    visitedSet += terrFrom
+    while(!terrQueue.isEmpty && visitedSet.size < GameData.calculateTerritoriesOwned(GameData.currPlayerIndex)) {
+      var currentTerr = terrQueue.dequeue()
+      if (currentTerr == terrToFortify) {
+        toReturn = true
+      }
+      else if (!visitedSet.contains(currentTerr)) {
+        visitedSet += currentTerr
+        for (x <- GameData.terrArray(currentTerr).getAdjList()) {
+          if (GameData.terrArray(x).ownerName == GameData.getCurrentPlayer.name) {
+            terrQueue += x
+          }
+        }
+      }
+      counter += 1
+    }
+    toReturn
   }
 
   def updateFortifyView:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
@@ -33,8 +64,8 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
       val errorString = errorHandleFortifyInput(data)
 
       errorString match {
-        case null => fortifyFunction(data)
-        case _ => Redirect(routes.FortifyController.updateFortifyView()).flashing(errorString)
+        case None => fortifyFunction(data)
+        case Some(tuple: (String, String)) => Redirect(routes.FortifyController.updateFortifyView()).flashing(errorString.get)
       }
     }
 
@@ -48,12 +79,14 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
     val numArmies = data.numArmies.toInt
     GameData.terrArray(terrFromIndex).decrementArmy(numArmies)
     GameData.terrArray(terrToFortifyIndex).incrementArmy(numArmies)
-    Redirect(routes.FortifyController.updateFortifyView()).flashing("Nice!" -> ("Territory " + data.terrToFortify
-      + " now has " + GameData.terrArray(terrToFortifyIndex).armyCount + " armies, while Territory " + data.terrFrom
-      + " now has " + GameData.terrArray(terrFromIndex).armyCount + " armies."))
+    Redirect(routes.TerritoryController.updatePlacements()).flashing(GameData.getCurrentPlayer.name + " has moved " + numArmies + " armies!" ->
+      ("Territory " + data.terrToFortify + " now has " + GameData.terrArray(terrToFortifyIndex).armyCount
+        + " armies, while Territory " + data.terrFrom + " now has " + GameData.terrArray(terrFromIndex).armyCount + " armies."))
   }
 
-  private def errorHandleFortifyInput(data: FortifyData): (String, String) = {
+  private def errorHandleFortifyInput(data: FortifyData): Option[(String, String)] =
+  {
+    val errorStringTuple =
     if (checkValidNums(data)) {
       val terrFromIndex = data.terrFrom.toInt
       val terrToFortifyIndex = data.terrToFortify.toInt
@@ -62,7 +95,7 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
         ("Hey!", "You don't own the territory supplying the armies!")
       } else if (!GameData.doesCurrPlayerOwnTerr(GameData.terrArray(terrToFortifyIndex))) {
         ("Hey!", "You don't own the territory you're trying to fortify!")
-      } else if (!GameData.checkTerritoryAdjacency(terrFromIndex, terrToFortifyIndex)) {
+      } else if (!isContinuous(terrFromIndex, terrToFortifyIndex)) {
         ("Hey!", "Those territories aren't continuous!")
       } else if (numArmies.toInt <= 0 || numArmies >= GameData.terrArray(terrFromIndex).armyCount) {
         ("Hey!", "You can't fortify with that number of armies!")
@@ -70,7 +103,8 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
         null
       }
     } else {
-      ("Cmon!", "You gotta enter valid numbers to fortify!")
+      ("Hey!", "You gotta enter valid numbers to fortify!")
     }
+    if (errorStringTuple != null) Some(errorStringTuple) else None
   }
 }

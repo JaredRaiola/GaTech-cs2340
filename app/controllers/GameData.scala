@@ -17,7 +17,7 @@ object GameData {
     if (i >= 0 && i <= 15) continent = 0
     if (i >= 16 && i <= 31) continent = 1
     if (i >= 32 && i <= 47) continent = 2
-    terrArray(i) = new Territory("TerritoryName" + i, "", 0, continent)
+    terrArray(i) = new Territory("TerritoryName" + i, "", 0, continent, i)
   }
 
   var attackDiceRoll: Array[Int] = Array(0,0,0)
@@ -36,9 +36,6 @@ object GameData {
     val sum = sumOfActive.foldLeft(0)(_ + _)
     sum == 0 && players(playerIndex).active
   }
-
-
-
 
   def setInactive(playerIndex: Int): Unit = {
     players(playerIndex).active = false
@@ -73,6 +70,10 @@ object GameData {
     players(currPlayerIndex)
   }
 
+  def setCurrentPlayerIndex(index: Int): Unit = {
+    currPlayerIndex = index
+  }
+
   def newTurn:Unit = {
     turnCounter += 1
     if (currPlayerIndex == players.length - 1) {
@@ -81,6 +82,8 @@ object GameData {
       currPlayerIndex += 1
     }
   }
+
+  def getNextPlayerIndex(currPlayerIndex: Int): Int = (currPlayerIndex + 1) % players.length
 
   def checkTerritoryAdjacency(terr1Index: Int, terr2Index: Int): Boolean = {
     //need to make the territory map graph
@@ -124,8 +127,8 @@ object GameData {
   }
 
   def assignNewArmies: Unit = {
-    var index = GameData.currPlayerIndex
-    var newArmies = GameData.calculateNewArmies(index)
+    val index = GameData.currPlayerIndex
+    val newArmies = GameData.calculateNewArmies(index)
     GameData.players(index).incrementArmyCount(newArmies)
   }
 

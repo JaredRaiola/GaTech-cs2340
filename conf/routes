@@ -8,6 +8,7 @@ GET     /                             controllers.PlayerFormController.index
 # Players
 GET     /players                      controllers.PlayerFormController.listPlayers
 POST    /players                      controllers.PlayerFormController.createPlayer
+POST    /players                      controllers.PlayerFormController.preSetPlayers
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                 controllers.Assets.versioned(path="/public", file: Asset)
@@ -32,4 +33,3 @@ POST     /attackview                   controllers.AttackController.attack
 
 GET      /fortifyView                  controllers.FortifyController.updateFortifyView
 POST     /fortifyView                  controllers.FortifyController.fortifyTerritory
-

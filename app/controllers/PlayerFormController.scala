@@ -23,6 +23,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
   import PlayerForm._
 
   private val postUrl = routes.PlayerFormController.createPlayer()
+  private val postUrl2 = routes.PlayerFormController.preSetPlayers()
   GameData.players.remove(0)
 
   def index:Action[AnyContent] = Action {
@@ -32,6 +33,20 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
   def listPlayers:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
     // Pass an unpopulated form to the template
     Ok(views.html.listPlayers(GameData.players, form, postUrl))
+  }
+
+  def preSetPlayers = Action { implicit request: MessagesRequest[AnyContent] =>
+    GameData.players.clear
+    GameData.players.append(new Player("Jacinto"))
+    GameData.players.append(new Player("Jack Cinto"))
+    GameData.players.append(new Player("Ha Seen Toe"))
+    GameData.players.append(new Player("Jah sinto"))
+    GameData.players.append(new Player("on Jah (cinto)"))
+    GameData.players.append(new Player("J a c i n t o"))
+    for (w <- GameData.players) {
+      w.setArmyCount(35 - (5 * (GameData.players.length - 3)))
+    }
+    Redirect(routes.PlayerFormController.listPlayers()).flashing("Alrighty" -> "The squad is ready")
   }
 
   // This will be the action that handles our form post
