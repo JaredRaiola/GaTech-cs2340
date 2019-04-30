@@ -186,7 +186,7 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     if (GameData.calculateTerritoriesOwned(index) == 0) {
       GameData.setInactive(index)
     } else {
-      GameData.players(index).incrementArmyCount(newArmies)
+      GameData.getPlayer(index).incrementArmyCount(newArmies)
     }
   }
 

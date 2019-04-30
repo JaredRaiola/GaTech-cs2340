@@ -16,7 +16,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
 
 
   private def territoryIsOccupied(terrIndex: Int): Boolean = GameData.terrArray(terrIndex).ownerName != ""
-  private def isArmyAmountInvalid(numArmies: Int): Boolean = numArmies <= 0 || numArmies > GameData.players(GameData.currPlayerIndex).armyBinCount
+  private def isArmyAmountInvalid(numArmies: Int): Boolean = numArmies <= 0 || numArmies > GameData.getCurrentPlayer.armyBinCount
   private def getRandomIndex = {
     var randomter = scala.util.Random.nextInt(GameData.numTerritories)
     var iterations = 0
@@ -29,8 +29,8 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     for (w <- 0 until (48 - GameData.turnCounter)) {
       var terrIndex = getRandomIndex
       GameData.terrArray(terrIndex).incrementArmy(1)
-      GameData.terrArray(terrIndex).setOwner(GameData.players(GameData.currPlayerIndex).name)
-      GameData.players(GameData.currPlayerIndex).decrementArmyCount(1)
+      GameData.terrArray(terrIndex).setOwner(GameData.getCurrentPlayer.name)
+      GameData.getCurrentPlayer.decrementArmyCount(1)
       newTurn
     }
   }
@@ -87,8 +87,8 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         //success
         if (terrIndex != -1) {
           GameData.terrArray(terrIndex).incrementArmy(1)
-          GameData.terrArray(terrIndex).setOwner(GameData.players(GameData.currPlayerIndex).name)
-          GameData.players(GameData.currPlayerIndex).decrementArmyCount(1)
+          GameData.terrArray(terrIndex).setOwner(GameData.getCurrentPlayer.name)
+          GameData.getCurrentPlayer.decrementArmyCount(1)
           newTurn
         }
         //now check turncounter
@@ -165,7 +165,7 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
         } else {
           //success
           GameData.terrArray(terrIndex).incrementArmy(data.numArmies)
-          GameData.players(GameData.currPlayerIndex).decrementArmyCount(data.numArmies)
+          GameData.getCurrentPlayer.decrementArmyCount(data.numArmies)
           //armiesOnTurn = armiesOnTurn + data.numArmies
           Ok(views.html.armyPlacement(additionalArmiesForm))
         }

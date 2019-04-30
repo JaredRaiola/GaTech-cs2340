@@ -29,8 +29,11 @@ object GameData {
 
   def startStateIncomplete: Boolean = terrArray.isEmpty || players.size < 3
 
-  def getCurrPlayer: Player =
+  def getCurrentPlayer: Player =
     if (GameData.players.length < 3) new Player("Game not set up") else GameData.players(GameData.currPlayerIndex)
+
+  def getPlayer(index: Int): Player =
+    if (players.length < 3) new Player("Game not set up") else players(index)
 
   def checkForWin(playerIndex: Int): Boolean = {
     val sumOfActive = for (player <- players) yield {
@@ -69,9 +72,6 @@ object GameData {
     turnCounter >= players.size
   }
 
-  def getCurrentPlayer: Player = {
-    players(currPlayerIndex)
-  }
 
   def setCurrentPlayerIndex(index: Int): Unit = {
     currPlayerIndex = index
@@ -86,7 +86,8 @@ object GameData {
     }
   }
 
-  def getNextPlayerIndex(currPlayerIndex: Int): Int = (currPlayerIndex + 1) % players.length
+  def getNextPlayerIndex(currPlayerIndex: Int): Int =
+    if (players.length > 0) (currPlayerIndex + 1) % players.length else -1
 
   def checkTerritoryAdjacency(terr1Index: Int, terr2Index: Int): Boolean = {
     //need to make the territory map graph
@@ -95,17 +96,21 @@ object GameData {
   }
 
   def doesCurrPlayerOwnTerr(terr: Territory): Boolean = {
-    terr.getOwner == GameData.players(GameData.currPlayerIndex).name
+    terr.getOwner == getCurrentPlayer.name
   }
 
   def calculateTerritoriesOwned(playerIndex: Int): Int = {
-    var territoriesOwned = 0
-    for (i <- terrArray.indices) {
-      if (terrArray(i).getOwner == players(playerIndex).name) {
-        territoriesOwned += 1
+    if (playerIndex == -1) {
+      0
+    } else {
+      var territoriesOwned = 0
+      for (i <- terrArray.indices) {
+        if (terrArray(i).getOwner == players(playerIndex).name) {
+          territoriesOwned += 1
+        }
       }
+      territoriesOwned
     }
-    territoriesOwned
   }
 
   def calculateContinentsArray(index: Int):Array[Int] = {
@@ -132,7 +137,7 @@ object GameData {
   def assignNewArmies: Unit = {
     val index = GameData.currPlayerIndex
     val newArmies = GameData.calculateNewArmies(index)
-    GameData.players(index).incrementArmyCount(newArmies)
+    getCurrentPlayer.incrementArmyCount(newArmies)
   }
 
   def calculateNewArmies(index: Int): Int = {
