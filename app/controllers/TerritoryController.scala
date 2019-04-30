@@ -120,14 +120,20 @@ class TerritoryController @Inject()(cc: MessagesControllerComponents) extends Me
     val nextPlayerIndex = getNextValidPlayerIndex(currentPlayerIndex)
     if (nextPlayerIndex == currentPlayerIndex) {
       //they are the winner
-      Ok(views.html.armyPlacement(additionalArmiesForm))
+      Ok(views.html.winnerView()) //um, does not work properly...
       //stub
-    } else {
+    } else if (GameData.getCurrentPlayer.armyBinCount == 0) {
       GameData.turnCounter += 1
       GameData.setCurrentPlayerIndex(nextPlayerIndex)
       assignNewArmies
       Ok(views.html.armyPlacement(additionalArmiesForm))
+    } else {
+      Ok(views.html.armyPlacement(additionalArmiesForm))
     }
+  }
+
+  def goToWin:Action[AnyContent] = Action { implicit request: MessagesRequest[AnyContent] =>
+    Ok(views.html.winnerView())
   }
 
 
