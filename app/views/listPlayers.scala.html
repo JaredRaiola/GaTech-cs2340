@@ -41,9 +41,11 @@
       <button class="pressButton">Add Player</button>
 
       }</div>
-    <form id="pre-set players" action="@routes.PlayerFormController.preSetPlayers">
+
+    <form id="pre-set-players" action="@routes.PlayerFormController.preSetPlayers">
       <input class="pressButton" type="submit" value="Pre-Set Players" />
     </form>
+
     @if(players.length >= 3) {
         <form id="playGame" action="@routes.TerritoryController.claimTerritories">
             <input class="pressButton" type="submit" value="Play Game" />

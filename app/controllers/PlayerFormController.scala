@@ -23,6 +23,7 @@ class PlayerFormController @Inject()(cc: MessagesControllerComponents) extends M
   import PlayerForm._
 
   private val postUrl = routes.PlayerFormController.createPlayer()
+  private val postUrl2 = routes.PlayerFormController.preSetPlayers()
   GameData.players.remove(0)
 
   def index:Action[AnyContent] = Action {

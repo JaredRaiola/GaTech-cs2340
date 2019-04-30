@@ -64,8 +64,8 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
       val errorString = errorHandleFortifyInput(data)
 
       errorString match {
-        case null => fortifyFunction(data)
-        case _ => Redirect(routes.FortifyController.updateFortifyView()).flashing(errorString)
+        case None => fortifyFunction(data)
+        case Some(tuple: (String, String)) => Redirect(routes.FortifyController.updateFortifyView()).flashing(errorString.get)
       }
     }
 
@@ -84,7 +84,9 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
         + " armies, while Territory " + data.terrFrom + " now has " + GameData.terrArray(terrFromIndex).armyCount + " armies."))
   }
 
-  private def errorHandleFortifyInput(data: FortifyData): (String, String) = {
+  private def errorHandleFortifyInput(data: FortifyData): Option[(String, String)] =
+  {
+    val errorStringTuple =
     if (checkValidNums(data)) {
       val terrFromIndex = data.terrFrom.toInt
       val terrToFortifyIndex = data.terrToFortify.toInt
@@ -103,5 +105,6 @@ class FortifyController @Inject()(cc: MessagesControllerComponents) extends Mess
     } else {
       ("Hey!", "You gotta enter valid numbers to fortify!")
     }
+    if (errorStringTuple != null) Some(errorStringTuple) else None
   }
 }

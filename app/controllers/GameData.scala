@@ -127,8 +127,8 @@ object GameData {
   }
 
   def assignNewArmies: Unit = {
-    var index = GameData.currPlayerIndex
-    var newArmies = GameData.calculateNewArmies(index)
+    val index = GameData.currPlayerIndex
+    val newArmies = GameData.calculateNewArmies(index)
     GameData.players(index).incrementArmyCount(newArmies)
   }
 
