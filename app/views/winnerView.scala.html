@@ -1,13 +1,16 @@
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Review Your Armies</title>
-  </head>
-  <body>
-    <!-- GameData.players(GameData.currPlayerIndex).name  is what you want to display -->
-    <p>
-      @GameData.getCurrentPlayer.name
-    </p>
-    <p>won the game</p>
-  </body>
-</html>
+@()
+
+@main("Game Over") {
+  <header>
+    <div class="story">
+      <h3 class="story-msg">And so, with the territories unified, the conflict comes to a decisive end. </h3>
+      <h3 class="story-msg">The legions of students led by @GameData.getCurrentPlayer.name have secured every single CULC breakout room for themselves. </h3>
+      <h3 class="story-msg">But the true ordeal of cramming has only just begun... </h3>
+    </div>
+  </header>
+  <div class="winner-results">
+    <i class="fas fa-award medal"></i>
+    <h3 class="winner-msg">Winner</h3>
+    <h3 class="winner-name">@GameData.getCurrentPlayer.name!</h3>
+  </div>
+}
