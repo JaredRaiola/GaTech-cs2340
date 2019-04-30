@@ -29,6 +29,9 @@ object GameData {
 
   def startStateIncomplete: Boolean = terrArray.isEmpty || players.size < 3
 
+  def getCurrPlayer: Player =
+    if (GameData.players.length < 3) new Player("Game not set up") else GameData.players(GameData.currPlayerIndex)
+
   def checkForWin(playerIndex: Int): Boolean = {
     val sumOfActive = for (player <- players) yield {
       if (player.active) 1 else 0
