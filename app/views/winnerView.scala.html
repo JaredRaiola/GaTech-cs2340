@@ -1,12 +1,16 @@
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Review Your Armies</title>
-  </head>
-  <body>
-    <h1>
-      @GameData.getCurrentPlayer.name
-    </h1>
-    <h2>has won the game</h2>
-  </body>
-</html>
+@()
+
+@main("Game Over") {
+  <header>
+    <div class="story">
+      <h3 class="story-msg">And so, with the territories unified, the conflict comes to a decisive end. </h3>
+      <h3 class="story-msg">The legions of students led by @GameData.getCurrentPlayer.name have secured every single CULC breakout room for themselves. </h3>
+      <h3 class="story-msg">But the true ordeal of cramming has only just begun... </h3>
+    </div>
+  </header>
+  <div class="winner-results">
+    <i class="fas fa-award medal"></i>
+    <h3 class="winner-msg">Winner</h3>
+    <h3 class="winner-name">@GameData.getCurrentPlayer.name!</h3>
+  </div>
+}
