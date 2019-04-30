@@ -33,3 +33,5 @@ POST     /attackview                   controllers.AttackController.attack
 
 GET      /fortifyView                  controllers.FortifyController.updateFortifyView
 POST     /fortifyView                  controllers.FortifyController.fortifyTerritory
+
+GET      /winnerView                   controllers.TerritoryController.goToWin
