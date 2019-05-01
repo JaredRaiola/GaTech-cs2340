@@ -34,7 +34,13 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
     terr.armyCount >= count && count < 3 && count > 0
   }
 
-
+  // Developer Case created to end the game early
+  private def itsGameOverMan = {
+    for (w <- 0 until 48) {
+      var terrIndex = w
+      GameData.terrArray(terrIndex).setOwner(GameData.getCurrentPlayer.name)
+    }
+  }
 
   /*
    * returns tuple of length 2 consisting of: attacker losses, defender losses
@@ -163,7 +169,13 @@ class AttackController @Inject()(cc: MessagesControllerComponents) extends Messa
         null
       }
     } else {
-      ("Fiddle Sticks!!", "You can only input numeric values into the forms")
+      // Developer case added in order to show off the end screen
+      if (data.terr.toLowerCase() == "endgame" || data.otherTerr.toLowerCase() == "endgame") {
+        itsGameOverMan
+        ("You just entered the Endgame", "Watch out for Thanos")
+      } else {
+        ("Fiddle Sticks!!", "You can only input numeric values into the forms")
+      }
     }
   }
 
